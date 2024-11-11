@@ -1,24 +1,46 @@
 package com.thebrownfoxx.unfocus.screen.clock.state
 
+import androidx.compose.runtime.Composable
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 
-sealed interface ClockState
+sealed interface ClockState {
+    val headerResource: StringResource
+    val duration: Duration?
+    val runningState: ClockRunningState
+    val progress: Float
 
-sealed interface TimerIntro : ClockState {
-    val duration: Duration
+    val header @Composable get() = stringResource(headerResource)
 }
 
-sealed interface Timer : ClockState {
-    val duration: Duration
-    val running: Boolean
-}
+data class TimerInstruction(
+    override val headerResource: StringResource,
+    override val duration: Duration,
+    override val runningState: ClockRunningState = ClockRunningState.Running,
+    override val progress: Float = 0f,
+) : ClockState
 
-sealed interface TimerExpired : ClockState
+data class Timer(
+    override val headerResource: StringResource,
+    override val duration: Duration,
+    override val runningState: ClockRunningState = ClockRunningState.Running,
+    override val progress: Float = 1f,
+) : ClockState
+
+data class TimerExpired(
+    override val headerResource: StringResource,
+    override val duration: Duration = Duration.ZERO,
+) : ClockState {
+    override val runningState = ClockRunningState.Expired
+    override val progress = 0f
+}
 
 data class TimerGroup(
-    val intro: TimerIntro,
+    val instruction: TimerInstruction,
     val timer: Timer,
     val expired: TimerExpired,
+    val colors: ClockColors,
 ) {
-    fun toList() = listOf(intro, timer, expired)
+    fun toList() = listOf(instruction, timer, expired)
 }

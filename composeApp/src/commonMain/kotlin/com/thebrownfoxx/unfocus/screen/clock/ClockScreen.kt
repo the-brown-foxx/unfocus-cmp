@@ -1,31 +1,34 @@
 package com.thebrownfoxx.unfocus.screen.clock
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.thebrownfoxx.unfocus.screen.clock.component.TimerBackground
-import com.thebrownfoxx.unfocus.screen.clock.component.TimerIntroDisplay
 import com.thebrownfoxx.unfocus.screen.clock.state.ClockState
-import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun ClockScreen(
     state: ClockState,
+    onRunningToggle: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
-        TimerBackground(
-            remainingDuration = 20.minutes,
-            fullDuration = 20.minutes,
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            fillColor = MaterialTheme.colorScheme.surface,
-        )
-        TimerIntroDisplay(
-            header = "Lock in?",
-            duration = 20.minutes,
-            onStart = {},
-            contentColor = MaterialTheme.colorScheme.onSurface,
-        )
-    }
+//    val fillColor by animateColorAsState(state.colors.fillColor)
+//    val contentColor by animateColorAsState(state.colors.contentColor)
+//    val clockButtonContainerColor by animateColorAsState(state.colors.clockButtonContainerColor)
+//    val clockButtonContentColor by animateColorAsState(contentColorFor(clockButtonContainerColor))
+//
+//    Box(modifier = modifier) {
+//        when (state) {
+////            is TimerIntro
+//        }
+//        TimerDisplay(
+//            header = "Lock in?",
+//            duration = 20.minutes,
+//            runningState = ClockRunningState.Paused,
+//            onRunningToggle = onRunningToggle,
+//            contentColor = contentColor,
+//            buttonColors = buttonColors(
+//                containerColor = clockButtonContentColor,
+//                contentColor = clockButtonContainerColor,
+//            ),
+//        )
+//    }
 }

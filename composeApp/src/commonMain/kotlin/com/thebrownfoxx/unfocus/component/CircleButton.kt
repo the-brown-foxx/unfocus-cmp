@@ -15,7 +15,7 @@ import androidx.compose.ui.unit.dp
 fun CircleButton(
     icon: @Composable () -> Unit,
     onClick: () -> Unit,
-    colors: CircleButtonColors = circleButtonColors(),
+    colors: ButtonColors = buttonColors(),
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -32,15 +32,15 @@ fun CircleButton(
 }
 
 @Composable
-fun circleButtonColors(
+fun buttonColors(
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = contentColorFor(containerColor),
-) = CircleButtonColors(
+) = ButtonColors(
     containerColor = containerColor,
     contentColor = contentColor,
 )
 
-data class CircleButtonColors(
+data class ButtonColors(
     val containerColor: Color,
     val contentColor: Color,
 )
