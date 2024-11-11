@@ -6,7 +6,8 @@ data class ClockColors(
     val backgroundColor: Color,
     val fillColor: Color,
     val contentColor: Color,
+    val clockButtonContainerColor: Color,
     val expiredBackgroundColor: Color,
     val expiredContentColor: Color,
-    val clockButtonContainerColor: Color,
+    val expiredClockButtonContainerColor: Color,
 )

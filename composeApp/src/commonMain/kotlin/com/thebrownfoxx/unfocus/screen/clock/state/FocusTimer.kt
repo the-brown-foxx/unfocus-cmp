@@ -14,15 +14,21 @@ val FocusTimerGroup
         instruction = FocusInstruction,
         timer = FocusTimer,
         expired = FocusExpired,
-        colors = ClockColors(
-            backgroundColor = MaterialTheme.colorScheme.surface,
-            fillColor = MaterialTheme.colorScheme.primaryContainer,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-            expiredBackgroundColor = MaterialTheme.colorScheme.primary,
-            expiredContentColor = MaterialTheme.colorScheme.onPrimary,
-            clockButtonContainerColor = MaterialTheme.colorScheme.primary,
-        )
+        colors = focusColors,
     )
+
+private val focusColors
+    @Composable get() = with(MaterialTheme.colorScheme) {
+        ClockColors(
+            backgroundColor = surface,
+            fillColor = primaryContainer,
+            contentColor = onPrimaryContainer,
+            clockButtonContainerColor = primary,
+            expiredBackgroundColor = primary,
+            expiredContentColor = onPrimary,
+            expiredClockButtonContainerColor = primaryContainer,
+        )
+    }
 
 private val focusDuration = 20.minutes
 
@@ -31,6 +37,8 @@ data object Intro : ClockState {
     override val duration = focusDuration
     override val runningState = ClockRunningState.Paused
     override val progress = 0f
+
+    val colors @Composable get() = focusColors
 }
 
 val FocusInstruction = TimerInstruction(

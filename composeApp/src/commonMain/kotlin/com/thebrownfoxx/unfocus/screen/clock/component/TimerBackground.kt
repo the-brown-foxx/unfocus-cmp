@@ -8,20 +8,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import kotlin.time.Duration
 
 @Composable
 fun TimerBackground(
-    remainingDuration: Duration,
-    fullDuration: Duration,
+    progress: Float,
     backgroundColor: Color,
     fillColor: Color,
     modifier: Modifier = Modifier,
 ) {
-    val remainingPercent =
-        remainingDuration.inWholeMilliseconds.toFloat() / fullDuration.inWholeMilliseconds
-
-    val fillPercent by animateFloatAsState(targetValue = remainingPercent)
+    val fillProgress by animateFloatAsState(targetValue = progress)
 
     Canvas(modifier = modifier.fillMaxSize()) {
         drawRect(
@@ -30,8 +25,8 @@ fun TimerBackground(
         )
         drawRect(
             color = fillColor,
-            size = size.copy(height = size.height * fillPercent),
-            topLeft = Offset(x = 0f, y = size.height * (1f - fillPercent)),
+            size = size.copy(height = size.height * fillProgress),
+            topLeft = Offset(x = 0f, y = size.height * (1f - fillProgress)),
         )
     }
 }

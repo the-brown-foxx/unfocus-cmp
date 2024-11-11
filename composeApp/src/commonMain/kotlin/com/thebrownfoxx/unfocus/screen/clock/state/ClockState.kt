@@ -7,7 +7,7 @@ import kotlin.time.Duration
 
 sealed interface ClockState {
     val headerResource: StringResource
-    val duration: Duration?
+    val duration: Duration
     val runningState: ClockRunningState
     val progress: Float
 

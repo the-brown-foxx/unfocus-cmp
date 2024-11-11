@@ -1,6 +1,7 @@
 package com.thebrownfoxx.unfocus.screen.clock.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,28 +15,52 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.component.ButtonColors
 import com.thebrownfoxx.unfocus.component.CircleButton
 import com.thebrownfoxx.unfocus.component.Spacer
+import com.thebrownfoxx.unfocus.component.buttonColors
 import com.thebrownfoxx.unfocus.extension.toHhSs
+import com.thebrownfoxx.unfocus.screen.clock.state.ClockColors
 import com.thebrownfoxx.unfocus.screen.clock.state.ClockRunningState
+import com.thebrownfoxx.unfocus.screen.clock.state.ClockState
+import com.thebrownfoxx.unfocus.screen.clock.state.Intro.runningState
+import com.thebrownfoxx.unfocus.screen.clock.state.TimerExpired
 import kotlin.time.Duration
 
 @Composable
 fun TimerDisplay(
-    header: String,
-    duration: Duration?,
-    runningState: ClockRunningState,
+    clockState: ClockState,
     onRunningToggle: () -> Unit,
-    contentColor: Color,
-    buttonColors: ButtonColors,
+    colors: ClockColors,
     modifier: Modifier = Modifier,
 ) {
+    val contentColor by animateColorAsState(
+        when (clockState) {
+            is TimerExpired -> colors.expiredContentColor
+            else -> colors.contentColor
+        }
+    )
+
+    val clockButtonContainerColor by animateColorAsState(
+        when (clockState) {
+            is TimerExpired -> colors.expiredClockButtonContainerColor
+            else -> colors.clockButtonContainerColor
+        }
+    )
+
+    val clockButtonContentColor by animateColorAsState(contentColorFor(clockButtonContainerColor))
+
+    val buttonColors = buttonColors(
+        containerColor = clockButtonContainerColor,
+        contentColor = clockButtonContentColor,
+    )
+
     CompositionLocalProvider(LocalContentColor provides contentColor) {
         Column(
             verticalArrangement = Arrangement.Center,
@@ -44,15 +69,11 @@ fun TimerDisplay(
                 .padding(32.dp)
                 .fillMaxSize(),
         ) {
-            AnimatedContent(targetState = duration) { targetDuration ->
-                Column {
-                    Header(text = header)
-                    if (targetDuration != null) {
-                        Spacer(height = 8.dp)
-                        Duration(duration = targetDuration)
-                    }
-                }
+            AnimatedContent(targetState = clockState.header) { header ->
+                Header(text = header)
             }
+            Spacer(height = 8.dp)
+            Duration(duration = clockState.duration)
             Spacer(height = 16.dp)
             ClockButton(
                 runningState = runningState,
