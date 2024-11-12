@@ -7,12 +7,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.updateAndGet
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
-import java.util.Timer as Ticker
-import kotlin.concurrent.timer as ticker
 
 class Timer(
     private val phaseDurationProvider: PhaseDurationProvider,
@@ -23,8 +19,11 @@ class Timer(
     val state = _state.asStateFlow()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private var lastTick: Instant = Instant.DISTANT_PAST
-    private var ticker: Ticker? = null
+    
+    private val ticker: Ticker = Ticker(
+        tickInterval = 10.milliseconds,
+        startImmediately = false,
+    )
 
     init {
         coroutineScope.launch {
@@ -64,62 +63,42 @@ class Timer(
     }
 
     private fun runInstruction() {
-        runTicker { elapsed ->
+        ticker.run { elapsed ->
             val state = _state.value
             if (state is Instruction && !state.paused && state.duration < Instruction.MaxDuration) {
                 _state.value = state.copy(duration = state.duration + elapsed)
             } else {
-                cancelTicker()
+                ticker.cancel()
                 _state.value = MainTimer(state.phase)
             }
         }
     }
 
     private fun resetInstruction() {
-        runTicker { elapsed ->
+        ticker.run { elapsed ->
             val state = _state.value
             if (state is Instruction && state.paused && state.duration > Duration.ZERO) {
                 _state.value = state.copy(duration = state.duration - elapsed)
             } else {
-                cancelTicker()
+                ticker.cancel()
             }
         }
     }
 
     private fun runMainTimer() {
-        runTicker { elapsed ->
+        ticker.run { elapsed ->
             val state = _state.value
             if (state is MainTimer && !state.paused && state.duration > Duration.ZERO) {
                 _state.value = state.copy(duration = state.duration - elapsed)
             } else {
-                cancelTicker()
+                ticker.cancel()
                 _state.value = Expired(state.phase)
             }
         }
     }
 
     private fun pauseMainTimer() {
-        cancelTicker()
-    }
-
-    private fun runTicker(onTick: (elapsed: Duration) -> Unit) {
-        cancelTicker()
-        lastTick = Clock.System.now()
-
-        val tickInterval = 10.milliseconds
-        ticker = ticker(
-            initialDelay = tickInterval.inWholeMilliseconds,
-            period = tickInterval.inWholeMilliseconds,
-        ) {
-            val tick = Clock.System.now()
-            onTick(tick - lastTick)
-            lastTick = tick
-        }
-    }
-
-    private fun cancelTicker() {
-        ticker?.cancel()
-        ticker?.purge()
+        ticker.cancel()
     }
 }
 

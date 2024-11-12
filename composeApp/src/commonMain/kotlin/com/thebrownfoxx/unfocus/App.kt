@@ -13,6 +13,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     UnfocusTheme {
+//        var testMode by remember { mutableStateOf(false) }
         val viewModel = viewModel { TimerViewModel(TestPhaseDurationProvider) }
         val state = viewModel.uiState.collectAsStateWithLifecycle()
         TimerScreen(
