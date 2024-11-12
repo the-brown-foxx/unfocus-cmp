@@ -13,6 +13,8 @@ private fun Preview() {
         TimerScreen(
             state = DefaultPhaseDurationProvider.IntroTimerUiState,
             onTimerButtonClick = {},
+            onMinimize = {},
+            onClose = {},
         )
     }
 }

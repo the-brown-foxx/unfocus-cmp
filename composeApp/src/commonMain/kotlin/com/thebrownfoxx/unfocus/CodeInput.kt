@@ -31,6 +31,6 @@ fun CodeInput(
             }
         },
         singleLine = true,
-        modifier = modifier.size(2.dp),
+        modifier = modifier.size(16.dp),
     )
 }

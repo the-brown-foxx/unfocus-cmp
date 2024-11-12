@@ -15,14 +15,13 @@ import com.thebrownfoxx.unfocus.ui.theme.UnfocusTheme
 private fun Preview() {
     UnfocusTheme {
         CircleButton(
-            icon = {
-                Icon(
-                    imageVector = Icons.TwoTone.PlayArrow,
-                    contentDescription = null,
-                )
-            },
             onClick = {},
             modifier = Modifier.padding(16.dp),
-        )
+        ) {
+            Icon(
+                imageVector = Icons.TwoTone.PlayArrow,
+                contentDescription = null,
+            )
+        }
     }
 }

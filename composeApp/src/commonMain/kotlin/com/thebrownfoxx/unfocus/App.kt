@@ -16,7 +16,10 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    onMinimize: () -> Unit = {},
+    onClose: () -> Unit = {},
+) {
     UnfocusTheme {
         var code by remember { mutableStateOf("") }
         var testMode by remember { mutableStateOf(false) }
@@ -40,6 +43,8 @@ fun App() {
         TimerScreen(
             state = state.value,
             onTimerButtonClick = viewModel::onTimerButtonClick,
+            onMinimize = onMinimize,
+            onClose = onClose,
         )
     }
 }

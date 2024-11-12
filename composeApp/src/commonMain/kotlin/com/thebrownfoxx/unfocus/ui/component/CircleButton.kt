@@ -13,10 +13,10 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun CircleButton(
-    icon: @Composable () -> Unit,
     onClick: () -> Unit,
-    colors: ButtonColors = buttonColors(),
     modifier: Modifier = Modifier,
+    colors: ButtonColors = buttonColors(),
+    content: @Composable () -> Unit,
 ) {
     Surface(
         onClick = onClick,
@@ -26,7 +26,7 @@ fun CircleButton(
         modifier = modifier,
     ) {
         Box(modifier = Modifier.padding(16.dp)) {
-            icon()
+            content()
         }
     }
 }

@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">Balls</string>
 
+    <string name="close">Close</string>
+    <string name="minimize">Minimize</string>
+
     <string name="intro">Lock in?</string>
 
     <string name="focus_paused">Focus paused</string>

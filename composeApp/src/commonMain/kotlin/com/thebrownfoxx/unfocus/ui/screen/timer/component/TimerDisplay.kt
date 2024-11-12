@@ -97,10 +97,9 @@ private fun TimerButton(
     buttonColors: ButtonColors,
 ) {
     CircleButton(
-        icon = { TimerButtonIcon(state = state) },
         colors = buttonColors,
         onClick = onClick,
-    )
+    ) { TimerButtonIcon(state = state) }
 }
 
 @Composable
