@@ -14,7 +14,9 @@ import kotlin.time.Duration.Companion.milliseconds
 import java.util.Timer as Ticker
 import kotlin.concurrent.timer as ticker
 
-class Timer {
+class Timer(
+    private val phaseDurationProvider: PhaseDurationProvider,
+) : PhaseDurationProvider by phaseDurationProvider {
     private var phaseIterator = Phase.queue.iterator()
 
     private val _state = MutableStateFlow<TimerState>(Instruction(nextPhase()))
@@ -120,3 +122,5 @@ class Timer {
         ticker?.purge()
     }
 }
+
+fun PhaseDurationProvider.Timer() = Timer(this)

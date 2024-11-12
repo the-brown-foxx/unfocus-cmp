@@ -1,8 +1,9 @@
 package com.thebrownfoxx.unfocus.ui.screen.timer.state
 
 import com.thebrownfoxx.unfocus.domain.Phase
+import com.thebrownfoxx.unfocus.domain.PhaseDurationProvider
 
-val IntroTimerUiState = TimerUiState(
+val PhaseDurationProvider.IntroTimerUiState get() = TimerUiState(
     type = TimerType.Intro,
     header = TimerHeader.Intro,
     fillProgress = 0f,

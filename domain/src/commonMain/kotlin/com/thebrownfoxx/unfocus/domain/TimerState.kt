@@ -21,12 +21,12 @@ data class MainTimer(
     override val phase: Phase,
     val duration: Duration,
     val paused: Boolean = false,
-) : TimerState {
-    constructor(phase: Phase) : this(
-        phase = phase,
-        duration = phase.duration,
-    )
-}
+) : TimerState
+
+fun PhaseDurationProvider.MainTimer(phase: Phase) = MainTimer(
+    phase = phase,
+    duration = phase.duration,
+)
 
 // TODO: Add a ticking up expired timer
 data class Expired(override val phase: Phase) : TimerState
