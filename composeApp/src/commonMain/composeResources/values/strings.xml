@@ -1,21 +1,25 @@
 <resources>
     <string name="app_name">Balls</string>
 
-    <string name="intro_header">Lock in?</string>
+    <string name="intro">Lock in?</string>
 
-    <string name="focus_instruction_header">Start focusing</string>
-    <string name="focus_timer_header">Locked in</string>
-    <string name="focus_expired_header">Break time</string>
+    <string name="focus_paused">Focus paused</string>
+    <string name="focus_instruction">Start focusing</string>
+    <string name="focus_timer">Locked in</string>
+    <string name="focus_expired">Break time</string>
 
-    <string name="eye_break_instruction_header">Look away from your screen</string>
-    <string name="eye_break_timer_header">Keep your eyes off the screen</string>
-    <string name="eye_break_expired_header">Your eyes are ready to get back to work</string>
+    <string name="eye_break_paused">Eye break paused</string>
+    <string name="eye_break_instruction">Look away from your screen</string>
+    <string name="eye_break_timer">Keep your eyes off the screen</string>
+    <string name="eye_break_expired">Your eyes are ready to get back to work</string>
 
-    <string name="sit_break_instruction_header">Stand up</string>
-    <string name="sit_break_timer_header">Move around</string>
-    <string name="sit_break_expired_header">You can now sit for another hour</string>
+    <string name="sit_break_paused">Sit break paused</string>
+    <string name="sit_break_instruction">Stand up</string>
+    <string name="sit_break_timer">Move around</string>
+    <string name="sit_break_expired">You can now sit for another hour</string>
 
-    <string name="full_rest_instruction_header">Take a break</string>
-    <string name="full_rest_timer_header">Grab a drink and relax</string>
-    <string name="full_rest_expired_header">Ready to get back to work?</string>
+    <string name="full_rest_paused">Full rest paused</string>
+    <string name="full_rest_instruction">Take a break</string>
+    <string name="full_rest_timer">Grab a drink and relax</string>
+    <string name="full_rest_expired">Ready to get back to work?</string>
 </resources>

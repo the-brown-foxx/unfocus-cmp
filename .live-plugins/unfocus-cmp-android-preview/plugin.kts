@@ -45,7 +45,7 @@ registerEditorAction(
         
         import androidx.compose.runtime.Composable
         import androidx.compose.ui.tooling.preview.Preview
-        import com.thebrownfoxx.unfocus.theme.UnfocusTheme
+        import com.thebrownfoxx.unfocus.ui.theme.UnfocusTheme
         
         @Preview
         @Composable
