@@ -9,6 +9,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import org.jetbrains.compose.resources.stringResource
+import unfocus.composeapp.generated.resources.Res
+import unfocus.composeapp.generated.resources.app_name
 import java.awt.Dimension
 
 fun main() = application {
@@ -17,16 +20,15 @@ fun main() = application {
     Window(
         state = windowState,
         onCloseRequest = ::exitApplication,
-        title = "Unfocus",
+        title = stringResource(Res.string.app_name),
         undecorated = true,
         transparent = true,
     ) {
         window.minimumSize = Dimension(600, 400)
-
         WindowDraggableArea(modifier = Modifier.clip(RoundedCornerShape(8.dp))) {
             Box {
                 App(
-                    onMinimize = { windowState.isMinimized = !windowState.isMinimized },
+                    onMinimize = { windowState.isMinimized = true },
                     onClose = ::exitApplication,
                 )
             }

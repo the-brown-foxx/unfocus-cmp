@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.ui.component.CloseButton
+import com.thebrownfoxx.unfocus.ui.component.Logo
 import com.thebrownfoxx.unfocus.ui.component.MinimizeButton
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerBackground
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerDisplay
@@ -24,23 +25,24 @@ fun TimerScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    Box(modifier = modifier) {
-        TimerBackground(
-            state = state,
-        )
-        TimerDisplay(
-            state = state,
-            onTimerButtonClick = onTimerButtonClick,
-        )
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .align(Alignment.TopEnd),
-        ) {
-            CompositionLocalProvider(LocalContentColor provides state.colors.contentColor) {
+    CompositionLocalProvider(LocalContentColor provides state.colors.contentColor) {
+        Box(modifier = modifier) {
+            TimerBackground(
+                state = state,
+            )
+            TimerDisplay(
+                state = state,
+                onTimerButtonClick = onTimerButtonClick,
+            )
+            Row(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .align(Alignment.TopEnd),
+            ) {
                 MinimizeButton(onClick = onMinimize)
                 CloseButton(onClick = onClose)
             }
+            Logo(modifier = Modifier.padding(24.dp))
         }
     }
 }
