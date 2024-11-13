@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.ui.component.CloseButton
 import com.thebrownfoxx.unfocus.ui.component.Logo
@@ -36,13 +37,18 @@ fun TimerScreen(
             )
             Row(
                 modifier = Modifier
+                    .alpha(0.6f)
                     .padding(4.dp)
                     .align(Alignment.TopEnd),
             ) {
                 MinimizeButton(onClick = onMinimize)
                 CloseButton(onClick = onClose)
             }
-            Logo(modifier = Modifier.padding(24.dp))
+            Logo(
+                modifier = Modifier
+                    .alpha(0.6f)
+                    .padding(24.dp),
+            )
         }
     }
 }
