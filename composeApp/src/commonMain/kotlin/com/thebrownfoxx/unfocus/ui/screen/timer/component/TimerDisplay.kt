@@ -1,9 +1,11 @@
 package com.thebrownfoxx.unfocus.ui.screen.timer.component
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
@@ -39,13 +41,9 @@ fun TimerDisplay(
     modifier: Modifier = Modifier,
 ) {
     val colors = state.colors
-
     val contentColor by animateColorAsState(colors.contentColor)
-
     val clockButtonContainerColor by animateColorAsState(colors.clockButtonContainerColor)
-
     val clockButtonContentColor by animateColorAsState(contentColorFor(clockButtonContainerColor))
-
     val buttonColors = buttonColors(
         containerColor = clockButtonContainerColor,
         contentColor = clockButtonContentColor,
@@ -63,7 +61,10 @@ fun TimerDisplay(
                 Header(text = header.text)
             }
             Spacer(height = 8.dp)
-            Duration(duration = state.duration)
+            Duration(
+                duration = state.duration,
+                expired = state.expired,
+            )
             Spacer(height = 16.dp)
             TimerButton(
                 state = state.timerButtonState,
@@ -83,11 +84,23 @@ private fun Header(text: String) {
 }
 
 @Composable
-private fun Duration(duration: Duration) {
-    Text(
-        text = duration.toHhSs(),
-        style = MaterialTheme.typography.displayLarge,
-    )
+private fun Duration(
+    duration: Duration,
+    expired: Boolean,
+) {
+    val style = MaterialTheme.typography.displayLarge
+    Row {
+        AnimatedVisibility(visible = expired) {
+            Text(
+                text = "-",
+                style = style,
+            )
+        }
+        Text(
+            text = duration.toHhSs(),
+            style = style,
+        )
+    }
 }
 
 @Composable

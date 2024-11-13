@@ -39,7 +39,7 @@ class Timer(
                         else -> runMainTimer()
                     }
 
-                    is Expired -> {}
+                    is Expired -> runExpiredTimer()
                 }
             }
         }
@@ -99,6 +99,15 @@ class Timer(
 
     private fun pauseMainTimer() {
         ticker.cancel()
+    }
+
+    private fun runExpiredTimer() {
+        ticker.run { elapsed ->
+            val state = _state.value
+            if (state is Expired) {
+                _state.value = state.copy(duration = state.duration + elapsed)
+            }
+        }
     }
 }
 

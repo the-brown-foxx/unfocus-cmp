@@ -28,5 +28,7 @@ fun PhaseDurationProvider.MainTimer(phase: Phase) = MainTimer(
     duration = phase.duration,
 )
 
-// TODO: Add a ticking up expired timer
-data class Expired(override val phase: Phase) : TimerState
+data class Expired(
+    override val phase: Phase,
+    val duration: Duration = Duration.ZERO,
+) : TimerState

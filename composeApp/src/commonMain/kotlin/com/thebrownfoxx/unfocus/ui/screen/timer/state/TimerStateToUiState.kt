@@ -22,7 +22,6 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakExpire
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakInstruction
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakPaused
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakTimer
-import kotlin.time.Duration
 
 fun PhaseDurationProvider.toUiState(timerState: TimerState): TimerUiState {
     val type = when (timerState.phase) {
@@ -79,7 +78,7 @@ fun PhaseDurationProvider.toUiState(timerState: TimerState): TimerUiState {
                     Phase.FullRest -> FullRestExpired
                 },
                 fillProgress = 0f,
-                duration = Duration.ZERO,
+                duration = duration,
                 paused = false,
                 timerButtonState = TimerButtonState.Stop,
                 expired = true,

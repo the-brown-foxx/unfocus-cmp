@@ -10,6 +10,8 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.state.IntroTimerUiState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -27,14 +29,17 @@ class TimerViewModel(
 
     init {
         viewModelScope.launch {
-            _uiState.collect {
-                if (it.expired && periodicBeeper == null) {
-                    periodicBeeper = beeper.beepEvery(beepInterval)
-                } else {
-                    periodicBeeper?.cancel()
-                    periodicBeeper = null
+            _uiState
+                .map { it.expired }
+                .distinctUntilChanged()
+                .collect { expired ->
+                    if (expired && periodicBeeper == null) {
+                        periodicBeeper = beeper.beepEvery(beepInterval)
+                    } else {
+                        periodicBeeper?.cancel()
+                        periodicBeeper = null
+                    }
                 }
-            }
         }
     }
 
