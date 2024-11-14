@@ -55,6 +55,17 @@ class Timer(
         }
     }
 
+    fun skipPhase() {
+        _state.value = Instruction(
+            phase = nextPhase(),
+            paused = true,
+        )
+    }
+
+    fun cancel() {
+        ticker.cancel()
+    }
+
     private fun nextPhase(): Phase {
         if (!phaseIterator.hasNext()) {
             phaseIterator = Phase.queue.iterator()
@@ -110,5 +121,3 @@ class Timer(
         }
     }
 }
-
-fun PhaseDurationProvider.Timer() = Timer(this)

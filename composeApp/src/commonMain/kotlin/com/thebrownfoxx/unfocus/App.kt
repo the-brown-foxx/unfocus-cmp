@@ -32,45 +32,40 @@ fun App(
 ) {
     UnfocusTheme {
         var code by remember { mutableStateOf("") }
-        var testMode by remember { mutableStateOf(false) }
         var show by remember { mutableStateOf(false) }
 
-        val viewModel = viewModel(key = testMode.toString()) {
-            val phaseDurationProvider = when {
-                testMode -> TestPhaseDurationProvider
-                else -> DefaultPhaseDurationProvider
-            }
-            TimerViewModel(
-                phaseDurationProvider,
-                dependencies.presenceAnnouncer,
-            )
+        val viewModel = viewModel {
+            TimerViewModel(dependencies.presenceAnnouncer)
         }
 
-        val state by viewModel.uiState.collectAsStateWithLifecycle()
+        with(viewModel) {
+            val state by uiState.collectAsStateWithLifecycle()
 
-        Box {
-            TimerScreen(
-                state = state,
-                onTimerButtonClick = viewModel::onTimerButtonClick,
-                onMinimize = onMinimize,
-                onClose = onClose,
-            )
+            Box {
+                TimerScreen(
+                    state = state,
+                    onTimerButtonClick = ::onTimerButtonClick,
+                    onMinimize = onMinimize,
+                    onClose = onClose,
+                )
 
-            CommandInput(
-                command = code,
-                onCommandChange = { code = it },
-                commands = listOf(
-                    Command("test") { testMode = true },
-                    Command("reset") { testMode = false },
-                    Command("show") { show = true },
-                    Command("hide") { show = false },
-                ),
-                contentColor = state.colors.contentColor,
-                modifier = Modifier
-                    .alpha(if (show) 1f else 0f)
-                    .align(Alignment.BottomStart)
-                    .padding(32.dp),
-            )
+                CommandInput(
+                    command = code,
+                    onCommandChange = { code = it },
+                    commands = listOf(
+                        Command("skip") { viewModel.onSkipPhase() },
+                        Command("test") { viewModel.onTestModeEnable() },
+                        Command("reset") { viewModel.onReset() },
+                        Command("show") { show = true },
+                        Command("hide") { show = false },
+                    ),
+                    contentColor = state.colors.contentColor,
+                    modifier = Modifier
+                        .alpha(if (show) 1f else 0f)
+                        .align(Alignment.BottomStart)
+                        .padding(32.dp),
+                )
+            }
         }
     }
 }
