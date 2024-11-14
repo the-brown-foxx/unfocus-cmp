@@ -45,7 +45,7 @@ fun TimerScreen(
             Logo(
                 modifier = Modifier
                     .alpha(0.6f)
-                    .padding(24.dp),
+                    .padding(32.dp),
             )
         }
     }
