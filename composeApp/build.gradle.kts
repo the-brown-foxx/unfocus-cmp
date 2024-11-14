@@ -85,8 +85,15 @@ compose.desktop {
 
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.thebrownfoxx.unfocus"
-            packageVersion = "1.0.0"
+            includeAllModules = true
+            packageName = "Unfocus"
+            packageVersion = "1.0.2"
+
+            windows {
+                upgradeUuid = "d50853a1-1e8e-40b8-b1d1-1b415e94c332"
+                iconFile.set(project.file("favicon.ico"))
+                shortcut = true
+            }
         }
     }
 }

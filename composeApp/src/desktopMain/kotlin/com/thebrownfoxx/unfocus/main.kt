@@ -9,9 +9,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import unfocus.composeapp.generated.resources.Res
 import unfocus.composeapp.generated.resources.app_name
+import unfocus.composeapp.generated.resources.super_u_mono
 import java.awt.Dimension
 
 fun main() = application {
@@ -23,6 +25,7 @@ fun main() = application {
         title = stringResource(Res.string.app_name),
         undecorated = true,
         transparent = true,
+        icon = painterResource(Res.drawable.super_u_mono),
     ) {
         window.minimumSize = Dimension(600, 400)
         WindowDraggableArea(modifier = Modifier.clip(RoundedCornerShape(8.dp))) {
