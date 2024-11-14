@@ -28,9 +28,7 @@ fun TimerScreen(
 ) {
     CompositionLocalProvider(LocalContentColor provides state.colors.contentColor) {
         Box(modifier = modifier) {
-            TimerBackground(
-                state = state,
-            )
+            TimerBackground(state = state)
             TimerDisplay(
                 state = state,
                 onTimerButtonClick = onTimerButtonClick,

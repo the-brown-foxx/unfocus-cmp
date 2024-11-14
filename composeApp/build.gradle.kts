@@ -38,8 +38,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.lifecycle.runtime.compose)
-//            implementation(libs.korge.core)
             implementation(projects.domain)
+            implementation(projects.presence)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

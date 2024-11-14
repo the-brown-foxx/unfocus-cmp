@@ -5,12 +5,13 @@ import kotlin.time.Duration.Companion.seconds
 
 sealed interface TimerState {
     val phase: Phase
+    val paused: Boolean
 }
 
 data class Instruction(
     override val phase: Phase,
     val duration: Duration = Duration.ZERO,
-    val paused: Boolean = false,
+    override val paused: Boolean = false,
 ) : TimerState {
     companion object {
         val MaxDuration = 2.seconds
@@ -20,7 +21,7 @@ data class Instruction(
 data class MainTimer(
     override val phase: Phase,
     val duration: Duration,
-    val paused: Boolean = false,
+    override val paused: Boolean = false,
 ) : TimerState
 
 fun PhaseDurationProvider.MainTimer(phase: Phase) = MainTimer(
@@ -31,4 +32,6 @@ fun PhaseDurationProvider.MainTimer(phase: Phase) = MainTimer(
 data class Expired(
     override val phase: Phase,
     val duration: Duration = Duration.ZERO,
-) : TimerState
+) : TimerState {
+    override val paused = false
+}

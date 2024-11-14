@@ -25,8 +25,10 @@ dependencyResolutionManagement {
             }
         }
         mavenCentral()
+        maven("https://jitpack.io")
     }
 }
 
 include(":composeApp")
 include(":domain")
+include(":presence")

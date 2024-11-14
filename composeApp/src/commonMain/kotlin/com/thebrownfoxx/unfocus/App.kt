@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.thebrownfoxx.unfocus.dependency.dependencies
 import com.thebrownfoxx.unfocus.domain.DefaultPhaseDurationProvider
 import com.thebrownfoxx.unfocus.domain.TestPhaseDurationProvider
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerScreen
@@ -29,7 +30,10 @@ fun App(
                 testMode -> TestPhaseDurationProvider
                 else -> DefaultPhaseDurationProvider
             }
-            TimerViewModel(phaseDurationProvider)
+            TimerViewModel(
+                phaseDurationProvider,
+                dependencies.presenceAnnouncer,
+            )
         }
 
         val state = viewModel.uiState.collectAsStateWithLifecycle()
