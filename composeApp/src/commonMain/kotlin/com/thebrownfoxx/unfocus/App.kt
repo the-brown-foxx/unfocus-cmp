@@ -14,8 +14,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.thebrownfoxx.unfocus.dependency.dependencies
-import com.thebrownfoxx.unfocus.domain.DefaultPhaseDurationProvider
-import com.thebrownfoxx.unfocus.domain.TestPhaseDurationProvider
 import com.thebrownfoxx.unfocus.ui.component.Command
 import com.thebrownfoxx.unfocus.ui.component.CommandInput
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerScreen
