@@ -10,6 +10,7 @@ import com.thebrownfoxx.unfocus.domain.Phase
 import com.thebrownfoxx.unfocus.domain.PhaseDurationProvider
 import com.thebrownfoxx.unfocus.domain.TestPhaseDurationProvider
 import com.thebrownfoxx.unfocus.domain.Timer
+import com.thebrownfoxx.unfocus.domain.TimerState
 import com.thebrownfoxx.unfocus.presence.PresenceAnnouncer
 import com.thebrownfoxx.unfocus.presence.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerType
@@ -28,6 +29,8 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
 
     private val _uiState = MutableStateFlow(getIntroTimerUiState(phaseDurationProvider))
     val uiState = _uiState.asStateFlow()
+
+    private var announcePresence = false
 
     private val beeper = Beeper()
 
@@ -80,21 +83,34 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
                 .distinctUntilChangedBy {
                     (it.phase == Phase.FullRest) to it.paused
                 }
-                .collect {
-                    if (!it.paused) {
-                        val presenceType = when (it.phase) {
-                            Phase.FullRest -> PresenceType.FullRest
-                            else -> PresenceType.Focus
-                        }
-                        presenceAnnouncer.announcePresence(type = presenceType)
-                    } else {
-                        presenceAnnouncer.hidePresence()
-                    }
-                }
+                .collect { it.setPresence() }
         }
     }
 
-    fun onSkipPhase() {
+    private fun TimerState?.setPresence() {
+        if (this?.paused == false && announcePresence) {
+            val presenceType = when (phase) {
+                Phase.FullRest -> PresenceType.FullRest
+                else -> PresenceType.Focus
+            }
+            presenceAnnouncer.announcePresence(type = presenceType)
+        } else {
+            presenceAnnouncer.hidePresence()
+        }
+    }
+
+    fun setAnnouncePresence(announcePresence: Boolean) {
+        if (announcePresence != this.announcePresence) {
+            this.announcePresence = announcePresence
+            timer?.state?.value.setPresence()
+        }
+    }
+
+    fun toggleAnnouncePresence() {
+        setAnnouncePresence(!announcePresence)
+    }
+
+    fun skipPhase() {
         if (_uiState.value.type == TimerType.Intro) {
             startTimer()
         } else {
@@ -102,12 +118,12 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
         }
     }
 
-    fun onTestModeEnable() {
+    fun enableTestMode() {
         phaseDurationProvider = TestPhaseDurationProvider
         resetToIntro()
     }
 
-    fun onReset() {
+    fun reset() {
         phaseDurationProvider = DefaultPhaseDurationProvider
         resetToIntro()
     }
