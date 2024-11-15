@@ -38,7 +38,8 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     private val _uiState = MutableStateFlow(getIntroTimerUiState(phaseDefinition))
     val uiState = _uiState.asStateFlow()
 
-    private var announcePresence = false
+    private var _announcePresence = MutableStateFlow(false)
+    val announcePresence = _announcePresence.asStateFlow()
 
     private val beeper = Beeper()
 
@@ -97,7 +98,7 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     }
 
     private fun TimerState?.setPresence() {
-        if (this?.values?.paused == false && announcePresence) {
+        if (this?.values?.paused == false && _announcePresence.value) {
             val presenceType = when (phase) {
                 Phase.FullRest -> PresenceType.FullRest
                 else -> PresenceType.Focus
@@ -109,21 +110,20 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     }
 
     fun setAnnouncePresence(announcePresence: Boolean) {
-        if (announcePresence != this.announcePresence) {
-            this.announcePresence = announcePresence
+        if (announcePresence != this._announcePresence.value) {
+            _announcePresence.value = announcePresence
             timer?.state?.value.setPresence()
         }
     }
 
     fun toggleAnnouncePresence() {
-        setAnnouncePresence(!announcePresence)
+        setAnnouncePresence(!_announcePresence.value)
     }
 
     fun skipPhase() {
-        if (_uiState.value.type == TimerType.Intro) {
-            startTimer()
-        } else {
-            timer?.skipPhase()
+        when (_uiState.value.type) {
+            TimerType.Intro -> startTimer()
+            else -> timer?.skipPhase()
         }
     }
 

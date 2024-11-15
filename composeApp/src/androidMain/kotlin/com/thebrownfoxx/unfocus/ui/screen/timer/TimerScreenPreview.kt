@@ -13,8 +13,8 @@ private fun Preview() {
         TimerScreen(
             state = getIntroTimerUiState(DefaultPhaseDefinition),
             onTimerButtonClick = {},
-            onMinimize = {},
-            onClose = {},
+            announcePresence = true,
+            onAnnouncePresenceToggle = {},
         )
     }
 }

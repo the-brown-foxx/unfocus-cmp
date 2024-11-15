@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import com.thebrownfoxx.unfocus.ui.screen.timer.component.WindowBar
+import com.thebrownfoxx.unfocus.ui.theme.UnfocusTheme
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import unfocus.composeapp.generated.resources.Res
@@ -29,13 +31,15 @@ fun main() = application {
         icon = painterResource(Res.drawable.super_u_mono_bg),
     ) {
         window.minimumSize = Dimension(600, 400)
-        WindowDraggableArea(modifier = Modifier.clip(RoundedCornerShape(8.dp))) {
-            Box {
-                App(
-                    onFlashTaskbar = { Taskbar.getTaskbar().requestWindowUserAttention(window) },
-                    onMinimize = { windowState.isMinimized = true },
-                    onClose = ::exitApplication,
-                )
+        UnfocusTheme {
+            Box(modifier = Modifier.clip(RoundedCornerShape(8.dp))) {
+                App(onFlashTaskbar = { Taskbar.getTaskbar().requestWindowUserAttention(window) })
+                WindowDraggableArea {
+                    WindowBar(
+                        onMinimize = { windowState.isMinimized = true },
+                        onClose = ::exitApplication,
+                    )
+                }
             }
         }
     }

@@ -16,44 +16,38 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.TimerScreen
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerViewModel
 import com.thebrownfoxx.unfocus.ui.screen.timer.commands
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.colors
-import com.thebrownfoxx.unfocus.ui.theme.UnfocusTheme
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(
-    onFlashTaskbar: () -> Unit = {},
-    onMinimize: () -> Unit = {},
-    onClose: () -> Unit = {},
-) {
-    UnfocusTheme {
-        val viewModel = viewModel {
-            TimerViewModel(dependencies.presenceAnnouncer)
+fun App(onFlashTaskbar: () -> Unit = {}) {
+    val viewModel = viewModel {
+        TimerViewModel(dependencies.presenceAnnouncer)
+    }
+
+    LaunchedEffect(viewModel.flashTaskbar) {
+        viewModel.flashTaskbar.collect {
+            onFlashTaskbar()
         }
+    }
 
-        val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val announcePresence by viewModel.announcePresence.collectAsStateWithLifecycle()
 
-        LaunchedEffect(viewModel.flashTaskbar) {
-            viewModel.flashTaskbar.collect {
-                onFlashTaskbar()
-            }
-        }
+    Box {
+        TimerScreen(
+            state = state,
+            onTimerButtonClick = viewModel::onTimerButtonClick,
+            announcePresence = announcePresence,
+            onAnnouncePresenceToggle = viewModel::toggleAnnouncePresence,
+        )
 
-        Box {
-            TimerScreen(
-                state = state,
-                onTimerButtonClick = viewModel::onTimerButtonClick,
-                onMinimize = onMinimize,
-                onClose = onClose,
-            )
-
-            CommandInput(
-                commands = viewModel.commands,
-                contentColor = state.colors.contentColor,
-                modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(32.dp),
-            )
-        }
+        CommandInput(
+            commands = viewModel.commands,
+            contentColor = state.colors.contentColor,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(32.dp),
+        )
     }
 }

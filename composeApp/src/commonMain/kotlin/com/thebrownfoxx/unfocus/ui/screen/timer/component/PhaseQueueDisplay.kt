@@ -46,7 +46,7 @@ fun PhaseQueueIndicator(
 }
 
 @Composable
-fun FocusIndicator(progress: Float) {
+private fun FocusIndicator(progress: Float) {
     PhaseIndicator(
         progress = progress,
         width = 32.dp,
@@ -54,12 +54,12 @@ fun FocusIndicator(progress: Float) {
 }
 
 @Composable
-fun EyeBreakIndicator(progress: Float) {
+private fun EyeBreakIndicator(progress: Float) {
     PhaseIndicator(progress = progress)
 }
 
 @Composable
-fun SitBreakIndicator(progress: Float) {
+private fun SitBreakIndicator(progress: Float) {
     PhaseIndicator(
         progress = progress,
         height = 16.dp,
@@ -67,7 +67,7 @@ fun SitBreakIndicator(progress: Float) {
 }
 
 @Composable
-fun RestIndicator(progress: Float) {
+private fun RestIndicator(progress: Float) {
     PhaseIndicator(
         progress = progress,
         height = 24.dp,
@@ -75,7 +75,7 @@ fun RestIndicator(progress: Float) {
 }
 
 @Composable
-fun PhaseIndicator(
+private fun PhaseIndicator(
     progress: Float,
     width: Dp = indicatorMinSize,
     height: Dp = indicatorMinSize,

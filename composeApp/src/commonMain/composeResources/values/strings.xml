@@ -25,4 +25,6 @@
     <string name="full_rest_instruction">Take a break</string>
     <string name="full_rest_timer">Grab a drink and relax</string>
     <string name="full_rest_expired">Ready to get back to work?</string>
+
+    <string name="announce_presence">Announce presence</string>
 </resources>
