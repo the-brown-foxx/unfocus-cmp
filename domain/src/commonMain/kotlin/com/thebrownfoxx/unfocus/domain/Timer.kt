@@ -11,9 +11,9 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
 class Timer(
-    private val phaseDurationProvider: PhaseDurationProvider,
-) : PhaseDurationProvider by phaseDurationProvider {
-    private var phaseIterator = Phase.queue.iterator()
+    private val phaseDefinition: PhaseDefinition,
+) : PhaseDefinition by phaseDefinition {
+    private var phaseIterator = queue.iterator()
 
     private val _state = MutableStateFlow<TimerState>(Instruction(nextPhase()))
     val state = _state.asStateFlow()
@@ -68,7 +68,7 @@ class Timer(
 
     private fun nextPhase(): Phase {
         if (!phaseIterator.hasNext()) {
-            phaseIterator = Phase.queue.iterator()
+            phaseIterator = queue.iterator()
         }
         return phaseIterator.next()
     }

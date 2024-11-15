@@ -24,7 +24,7 @@ data class MainTimer(
     override val paused: Boolean = false,
 ) : TimerState
 
-fun PhaseDurationProvider.MainTimer(phase: Phase) = MainTimer(
+fun PhaseDefinition.MainTimer(phase: Phase) = MainTimer(
     phase = phase,
     duration = phase.duration,
 )

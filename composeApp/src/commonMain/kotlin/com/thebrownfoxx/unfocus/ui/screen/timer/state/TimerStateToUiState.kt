@@ -4,7 +4,7 @@ import com.thebrownfoxx.unfocus.domain.Expired
 import com.thebrownfoxx.unfocus.domain.Instruction
 import com.thebrownfoxx.unfocus.domain.MainTimer
 import com.thebrownfoxx.unfocus.domain.Phase
-import com.thebrownfoxx.unfocus.domain.PhaseDurationProvider
+import com.thebrownfoxx.unfocus.domain.PhaseDefinition
 import com.thebrownfoxx.unfocus.domain.TimerState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.EyeBreakExpired
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.EyeBreakInstruction
@@ -23,7 +23,7 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakInstru
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakPaused
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.SitBreakTimer
 
-fun PhaseDurationProvider.toUiState(timerState: TimerState): TimerUiState {
+fun PhaseDefinition.toUiState(timerState: TimerState): TimerUiState {
     val type = when (timerState.phase) {
         Phase.Focus -> TimerType.Focus
         Phase.EyeBreak -> TimerType.Break

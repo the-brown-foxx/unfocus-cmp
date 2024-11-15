@@ -4,13 +4,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thebrownfoxx.unfocus.beeper.Beeper
 import com.thebrownfoxx.unfocus.beeper.PeriodicBeeper
-import com.thebrownfoxx.unfocus.domain.DefaultPhaseDurationProvider
+import com.thebrownfoxx.unfocus.domain.DefaultPhaseDefinition
 import com.thebrownfoxx.unfocus.domain.Expired
 import com.thebrownfoxx.unfocus.domain.Phase
-import com.thebrownfoxx.unfocus.domain.PhaseDurationProvider
-import com.thebrownfoxx.unfocus.domain.TestPhaseDurationProvider
+import com.thebrownfoxx.unfocus.domain.PhaseDefinition
+import com.thebrownfoxx.unfocus.domain.TestPhaseDefinition
 import com.thebrownfoxx.unfocus.domain.Timer
 import com.thebrownfoxx.unfocus.domain.TimerState
+import com.thebrownfoxx.unfocus.domain.UserPhaseCycle
+import com.thebrownfoxx.unfocus.domain.UserPhaseDefinition
+import com.thebrownfoxx.unfocus.domain.UserPhaseDurations
 import com.thebrownfoxx.unfocus.presence.PresenceAnnouncer
 import com.thebrownfoxx.unfocus.presence.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerType
@@ -25,9 +28,9 @@ import kotlin.time.Duration.Companion.minutes
 class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewModel() {
     private var timer: Timer? = null
 
-    private var phaseDurationProvider: PhaseDurationProvider = DefaultPhaseDurationProvider
+    private var phaseDefinition: PhaseDefinition = DefaultPhaseDefinition
 
-    private val _uiState = MutableStateFlow(getIntroTimerUiState(phaseDurationProvider))
+    private val _uiState = MutableStateFlow(getIntroTimerUiState(phaseDefinition))
     val uiState = _uiState.asStateFlow()
 
     private var announcePresence = false
@@ -44,7 +47,7 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     }
 
     private fun startTimer() {
-        timer = Timer(phaseDurationProvider).apply {
+        timer = Timer(phaseDefinition).apply {
             collectUiState()
             collectExpiredBeeps()
             collectPresence()
@@ -119,18 +122,39 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     }
 
     fun enableTestMode() {
-        phaseDurationProvider = TestPhaseDurationProvider
-        resetToIntro()
+        setPhaseDefinition(TestPhaseDefinition)
+    }
+
+    fun setUserPhaseDurations(userPhaseDurations: UserPhaseDurations) {
+        val phaseDefinition = phaseDefinition
+        if (phaseDefinition is UserPhaseDefinition) {
+            setPhaseDefinition(UserPhaseDefinition(userPhaseDurations, phaseDefinition.cycle))
+        } else {
+            setPhaseDefinition(UserPhaseDefinition(durations = userPhaseDurations))
+        }
+    }
+
+    fun setUserPhaseCycle(userPhaseCycle: UserPhaseCycle) {
+        val phaseDefinition = phaseDefinition
+        if (phaseDefinition is UserPhaseDefinition) {
+            setPhaseDefinition(UserPhaseDefinition(phaseDefinition.durations, userPhaseCycle))
+        } else {
+            setPhaseDefinition(UserPhaseDefinition(cycle = userPhaseCycle))
+        }
     }
 
     fun reset() {
-        phaseDurationProvider = DefaultPhaseDurationProvider
+        setPhaseDefinition(DefaultPhaseDefinition)
+    }
+
+    private fun setPhaseDefinition(phaseDefinition: PhaseDefinition) {
+        this.phaseDefinition = phaseDefinition
         resetToIntro()
     }
 
     private fun resetToIntro() {
         timer?.cancel()
         timer = null
-        _uiState.value = getIntroTimerUiState(phaseDurationProvider)
+        _uiState.value = getIntroTimerUiState(phaseDefinition)
     }
 }
