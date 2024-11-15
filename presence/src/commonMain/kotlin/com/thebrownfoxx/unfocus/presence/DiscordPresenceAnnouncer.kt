@@ -10,6 +10,7 @@ import kotlinx.datetime.Clock
 class DiscordPresenceAnnouncer : PresenceAnnouncer {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
     private val ipc = KDiscordIPC(BuildKonfig.DISCORD_CLIENT_ID)
+    private var presenceSetByInstance = false
 
     init {
         coroutineScope.launch {
@@ -27,12 +28,16 @@ class DiscordPresenceAnnouncer : PresenceAnnouncer {
             ipc.activityManager.setActivity(details = details) {
                 timestamps(start = Clock.System.now().toEpochMilliseconds())
             }
+            presenceSetByInstance = true
         }
     }
 
     override fun hidePresence() {
         coroutineScope.launch {
-            ipc.activityManager.clearActivity()
+            if (presenceSetByInstance) {
+                ipc.activityManager.clearActivity()
+                presenceSetByInstance = false
+            }
         }
     }
 }

@@ -11,6 +11,8 @@ import com.thebrownfoxx.unfocus.domain.PhaseDurationProvider
 import com.thebrownfoxx.unfocus.domain.TestPhaseDurationProvider
 import com.thebrownfoxx.unfocus.domain.Timer
 import com.thebrownfoxx.unfocus.domain.TimerState
+import com.thebrownfoxx.unfocus.domain.UserPhaseDurationProvider
+import com.thebrownfoxx.unfocus.domain.UserPhaseDurations
 import com.thebrownfoxx.unfocus.presence.PresenceAnnouncer
 import com.thebrownfoxx.unfocus.presence.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerType
@@ -119,12 +121,19 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     }
 
     fun enableTestMode() {
-        phaseDurationProvider = TestPhaseDurationProvider
-        resetToIntro()
+        setPhaseDurationProvider(TestPhaseDurationProvider)
+    }
+
+    fun setUserPhaseDurations(userPhaseDurations: UserPhaseDurations) {
+        setPhaseDurationProvider(UserPhaseDurationProvider(userPhaseDurations))
     }
 
     fun reset() {
-        phaseDurationProvider = DefaultPhaseDurationProvider
+        setPhaseDurationProvider(DefaultPhaseDurationProvider)
+    }
+
+    private fun setPhaseDurationProvider(phaseDurationProvider: PhaseDurationProvider) {
+        this.phaseDurationProvider = phaseDurationProvider
         resetToIntro()
     }
 
