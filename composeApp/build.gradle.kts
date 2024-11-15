@@ -87,7 +87,7 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             includeAllModules = true
             packageName = "Unfocus"
-            packageVersion = "1.0.2"
+            packageVersion = "1.0.3"
 
             windows {
                 upgradeUuid = "d50853a1-1e8e-40b8-b1d1-1b415e94c332"
