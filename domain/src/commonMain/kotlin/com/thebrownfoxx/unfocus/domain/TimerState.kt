@@ -3,35 +3,40 @@ package com.thebrownfoxx.unfocus.domain
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 
-sealed interface TimerState {
-    val phase: Phase
+data class TimerState(
+    val phaseIndex: Int,
+    val phaseQueue: List<Phase>,
+    val values: TimerStateValues = Instruction(),
+) {
+    val phase = phaseQueue[phaseIndex]
+
+    val next get() = TimerState(
+        phaseIndex = if (phaseIndex == phaseQueue.lastIndex) 0 else phaseIndex + 1,
+        phaseQueue = phaseQueue,
+        values = Instruction(),
+    )
+}
+
+sealed interface TimerStateValues {
     val paused: Boolean
 }
 
 data class Instruction(
-    override val phase: Phase,
     val duration: Duration = Duration.ZERO,
     override val paused: Boolean = false,
-) : TimerState {
+) : TimerStateValues {
     companion object {
         val MaxDuration = 2.seconds
     }
 }
 
 data class MainTimer(
-    override val phase: Phase,
     val duration: Duration,
     override val paused: Boolean = false,
-) : TimerState
-
-fun PhaseDefinition.MainTimer(phase: Phase) = MainTimer(
-    phase = phase,
-    duration = phase.duration,
-)
+) : TimerStateValues
 
 data class Expired(
-    override val phase: Phase,
     val duration: Duration = Duration.ZERO,
-) : TimerState {
+) : TimerStateValues {
     override val paused = false
 }

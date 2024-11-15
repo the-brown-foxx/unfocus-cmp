@@ -10,9 +10,9 @@ val TimerUiState.colors: TimerColors
         return with(MaterialTheme.colorScheme) {
             when (state.type) {
                 TimerType.Intro -> introColors
-                TimerType.Focus -> if (expired) focusExpiredColors else focusColors
-                TimerType.Break -> if (expired) breakExpiredColors else breakColors
-                TimerType.Rest -> if (expired) restExpiredColors else restColors
+                PhaseTimerType.Focus -> if (expired) focusExpiredColors else focusColors
+                is BreakTimerType -> if (expired) breakExpiredColors else breakColors
+                PhaseTimerType.Rest -> if (expired) restExpiredColors else restColors
             }
         }
     }

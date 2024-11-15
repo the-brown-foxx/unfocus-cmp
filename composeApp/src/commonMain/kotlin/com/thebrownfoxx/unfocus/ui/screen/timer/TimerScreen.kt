@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.ui.component.CloseButton
 import com.thebrownfoxx.unfocus.ui.component.Logo
 import com.thebrownfoxx.unfocus.ui.component.MinimizeButton
+import com.thebrownfoxx.unfocus.ui.screen.timer.component.PhaseQueueIndicator
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerBackground
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerDisplay
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerUiState
@@ -46,6 +47,14 @@ fun TimerScreen(
                 modifier = Modifier
                     .alpha(0.6f)
                     .padding(32.dp),
+            )
+            PhaseQueueIndicator(
+                phaseIndex = state.phaseIndex,
+                phaseProgress = state.phaseProgress,
+                phaseQueue = state.phaseQueue,
+                modifier = Modifier
+                    .padding(32.dp)
+                    .align(Alignment.BottomCenter),
             )
         }
     }

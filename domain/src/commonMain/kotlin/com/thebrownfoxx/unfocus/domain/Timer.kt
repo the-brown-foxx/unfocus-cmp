@@ -5,7 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.flow.updateAndGet
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
@@ -13,13 +13,16 @@ import kotlin.time.Duration.Companion.milliseconds
 class Timer(
     private val phaseDefinition: PhaseDefinition,
 ) : PhaseDefinition by phaseDefinition {
-    private var phaseIterator = queue.iterator()
-
-    private val _state = MutableStateFlow<TimerState>(Instruction(nextPhase()))
+    private val _state = MutableStateFlow(
+        TimerState(
+            phaseIndex = 0,
+            phaseQueue = queue,
+        )
+    )
     val state = _state.asStateFlow()
 
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    
+
     private val ticker: Ticker = Ticker(
         tickInterval = 10.milliseconds,
         startImmediately = false,
@@ -28,14 +31,14 @@ class Timer(
     init {
         coroutineScope.launch {
             _state.collectLatest { state ->
-                when (state) {
+                when (state.values) {
                     is Instruction -> when {
-                        state.paused -> resetInstruction()
+                        state.values.paused -> resetInstruction()
                         else -> runInstruction()
                     }
 
                     is MainTimer -> when {
-                        state.paused -> pauseMainTimer()
+                        state.values.paused -> pauseMainTimer()
                         else -> runMainTimer()
                     }
 
@@ -46,50 +49,50 @@ class Timer(
     }
 
     fun toggleRunning() {
-        _state.updateAndGet {
-            when (it) {
-                is Instruction -> it.copy(paused = !it.paused)
-                is MainTimer -> it.copy(paused = !it.paused)
-                is Expired -> Instruction(nextPhase())
+        _state.update {
+            when (it.values) {
+                is Instruction -> it.copy(values = it.values.copy(paused = !it.values.paused))
+                is MainTimer -> it.copy(values = it.values.copy(paused = !it.values.paused))
+                is Expired -> it.next
             }
         }
     }
 
     fun skipPhase() {
-        _state.value = Instruction(
-            phase = nextPhase(),
-            paused = true,
-        )
+        _state.update { it.next }
     }
 
     fun cancel() {
         ticker.cancel()
     }
 
-    private fun nextPhase(): Phase {
-        if (!phaseIterator.hasNext()) {
-            phaseIterator = queue.iterator()
-        }
-        return phaseIterator.next()
-    }
-
     private fun runInstruction() {
         ticker.run { elapsed ->
-            val state = _state.value
-            if (state is Instruction && !state.paused && state.duration < Instruction.MaxDuration) {
-                _state.value = state.copy(duration = state.duration + elapsed)
-            } else {
-                ticker.cancel()
-                _state.value = MainTimer(state.phase)
+            _state.update {
+                with(it) {
+                    val values =
+                        if (
+                            values is Instruction &&
+                            !values.paused &&
+                            values.duration < Instruction.MaxDuration
+                        ) {
+                            values.copy(duration = values.duration + elapsed)
+                        } else {
+                            ticker.cancel()
+                            MainTimer(duration = phase.duration)
+                        }
+                    it.copy(values = values)
+                }
             }
         }
     }
 
     private fun resetInstruction() {
         ticker.run { elapsed ->
-            val state = _state.value
-            if (state is Instruction && state.paused && state.duration > Duration.ZERO) {
-                _state.value = state.copy(duration = state.duration - elapsed)
+            val values = _state.value.values
+            if (values is Instruction && values.paused && values.duration > Duration.ZERO) {
+                val newValues = values.copy(duration = values.duration - elapsed)
+                _state.update { it.copy(values = newValues) }
             } else {
                 ticker.cancel()
             }
@@ -98,12 +101,20 @@ class Timer(
 
     private fun runMainTimer() {
         ticker.run { elapsed ->
-            val state = _state.value
-            if (state is MainTimer && !state.paused && state.duration > Duration.ZERO) {
-                _state.value = state.copy(duration = state.duration - elapsed)
-            } else {
-                ticker.cancel()
-                _state.value = Expired(state.phase)
+            _state.update {
+                with(it) {
+                    val values = if (
+                        values is MainTimer &&
+                        !values.paused &&
+                        values.duration > Duration.ZERO
+                    ) {
+                        values.copy(duration = values.duration - elapsed)
+                    } else {
+                        ticker.cancel()
+                        Expired()
+                    }
+                    it.copy(values = values)
+                }
             }
         }
     }
@@ -114,9 +125,12 @@ class Timer(
 
     private fun runExpiredTimer() {
         ticker.run { elapsed ->
-            val state = _state.value
+            val state = _state.value.values
             if (state is Expired) {
-                _state.value = state.copy(duration = state.duration + elapsed)
+                val newValues = state.copy(duration = state.duration + elapsed)
+                _state.update { it.copy(values = newValues) }
+            } else {
+                ticker.cancel()
             }
         }
     }

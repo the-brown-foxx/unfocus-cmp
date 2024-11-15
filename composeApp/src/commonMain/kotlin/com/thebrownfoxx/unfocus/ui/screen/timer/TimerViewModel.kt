@@ -68,9 +68,9 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
 
         viewModelScope.launch {
             state
-                .distinctUntilChangedBy { it is Expired }
+                .distinctUntilChangedBy { it.values is Expired }
                 .collect {
-                    if (it is Expired && periodicBeeper == null) {
+                    if (it.values is Expired && periodicBeeper == null) {
                         periodicBeeper = beeper.beepEvery(beepInterval)
                     } else {
                         periodicBeeper?.cancel()
@@ -84,14 +84,14 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
         viewModelScope.launch {
             state
                 .distinctUntilChangedBy {
-                    (it.phase == Phase.FullRest) to it.paused
+                    (it.phase == Phase.FullRest) to it.values.paused
                 }
                 .collect { it.setPresence() }
         }
     }
 
     private fun TimerState?.setPresence() {
-        if (this?.paused == false && announcePresence) {
+        if (this?.values?.paused == false && announcePresence) {
             val presenceType = when (phase) {
                 Phase.FullRest -> PresenceType.FullRest
                 else -> PresenceType.Focus
