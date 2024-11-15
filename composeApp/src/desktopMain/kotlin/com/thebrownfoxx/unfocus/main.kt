@@ -15,6 +15,7 @@ import unfocus.composeapp.generated.resources.Res
 import unfocus.composeapp.generated.resources.app_name
 import unfocus.composeapp.generated.resources.super_u_mono_bg
 import java.awt.Dimension
+import java.awt.Taskbar
 
 fun main() = application {
     val windowState = rememberWindowState()
@@ -31,6 +32,7 @@ fun main() = application {
         WindowDraggableArea(modifier = Modifier.clip(RoundedCornerShape(8.dp))) {
             Box {
                 App(
+                    onFlashTaskbar = { Taskbar.getTaskbar().requestWindowUserAttention(window) },
                     onMinimize = { windowState.isMinimized = true },
                     onClose = ::exitApplication,
                 )

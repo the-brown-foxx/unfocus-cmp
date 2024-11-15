@@ -3,6 +3,7 @@ package com.thebrownfoxx.unfocus
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +22,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 @Preview
 fun App(
+    onFlashTaskbar: () -> Unit = {},
     onMinimize: () -> Unit = {},
     onClose: () -> Unit = {},
 ) {
@@ -30,6 +32,12 @@ fun App(
         }
 
         val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+        LaunchedEffect(viewModel.flashTaskbar) {
+            viewModel.flashTaskbar.collect {
+                onFlashTaskbar()
+            }
+        }
 
         Box {
             TimerScreen(

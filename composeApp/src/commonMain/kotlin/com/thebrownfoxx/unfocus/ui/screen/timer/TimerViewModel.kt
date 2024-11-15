@@ -19,7 +19,9 @@ import com.thebrownfoxx.unfocus.presence.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.getIntroTimerUiState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
@@ -29,6 +31,9 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     private var timer: Timer? = null
 
     private var phaseDefinition: PhaseDefinition = DefaultPhaseDefinition
+
+    private val _flashTaskbar = MutableSharedFlow<Unit>()
+    val flashTaskbar = _flashTaskbar.asSharedFlow()
 
     private val _uiState = MutableStateFlow(getIntroTimerUiState(phaseDefinition))
     val uiState = _uiState.asStateFlow()
@@ -71,6 +76,7 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
                 .distinctUntilChangedBy { it.values is Expired }
                 .collect {
                     if (it.values is Expired && periodicBeeper == null) {
+                        _flashTaskbar.emit(Unit)
                         periodicBeeper = beeper.beepEvery(beepInterval)
                     } else {
                         periodicBeeper?.cancel()
