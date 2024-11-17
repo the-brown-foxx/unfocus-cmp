@@ -23,7 +23,9 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
 
@@ -55,7 +57,7 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
     private fun startTimer() {
         timer = Timer(phaseDefinition).apply {
             collectUiState()
-            collectExpiredBeeps()
+            collectExpireTimer()
             collectPresence()
         }
     }
@@ -68,56 +70,57 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
         }
     }
 
-    private fun Timer.collectExpiredBeeps() {
+    private fun Timer.collectExpireTimer() {
         val beepInterval = 1.minutes
         var periodicBeeper: PeriodicBeeper? = null
 
         viewModelScope.launch {
-            state
-                .distinctUntilChangedBy { it.values is Expired }
-                .collect {
-                    if (it.values is Expired && periodicBeeper == null) {
-                        _flashTaskbar.emit(Unit)
-                        periodicBeeper = beeper.beepEvery(beepInterval)
-                    } else {
-                        periodicBeeper?.cancel()
-                        periodicBeeper = null
-                    }
+            state.distinctUntilChangedBy {
+                it.values is Expired
+            }.collect {
+                if (it.values is Expired && periodicBeeper == null) {
+                    _flashTaskbar.emit(Unit)
+                    periodicBeeper = beeper.beepEvery(beepInterval)
+                } else {
+                    periodicBeeper?.cancel()
+                    periodicBeeper = null
                 }
+            }
         }
     }
 
     private fun Timer.collectPresence() {
         viewModelScope.launch {
-            state
-                .distinctUntilChangedBy {
-                    (it.phase == Phase.FullRest) to it.values.paused
+            combine(state, _announcePresence) { state, announcePresence ->
+                state to announcePresence
+            }.distinctUntilChangedBy { (it, announcePresence) ->
+                (it.phase == Phase.FullRest) to it.values.paused to announcePresence
+            }.collect { (state, announcePresence) ->
+                if (announcePresence) {
+                    state.setPresence()
                 }
-                .collect { it.setPresence() }
+            }
         }
     }
 
-    private fun TimerState?.setPresence() {
-        if (this?.values?.paused == false && _announcePresence.value) {
+    private fun TimerState.setPresence() {
+        if (!this.values.paused) {
             val presenceType = when (phase) {
                 Phase.FullRest -> PresenceType.FullRest
                 else -> PresenceType.Focus
             }
             presenceAnnouncer.announcePresence(type = presenceType)
         } else {
-            presenceAnnouncer.hidePresence()
-        }
-    }
-
-    fun setAnnouncePresence(announcePresence: Boolean) {
-        if (announcePresence != this._announcePresence.value) {
-            _announcePresence.value = announcePresence
-            timer?.state?.value.setPresence()
+            presenceAnnouncer.pausePresence()
         }
     }
 
     fun toggleAnnouncePresence() {
-        setAnnouncePresence(!_announcePresence.value)
+        _announcePresence.update {
+            val announcePresence = !it
+            if (!announcePresence) presenceAnnouncer.hidePresence()
+            announcePresence
+        }
     }
 
     fun skipPhase() {

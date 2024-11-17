@@ -4,40 +4,99 @@ import dev.cbyrne.kdiscordipc.KDiscordIPC
 import dev.cbyrne.kdiscordipc.data.activity.timestamps
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
+import kotlin.time.Duration.Companion.minutes
 
 class DiscordPresenceAnnouncer : PresenceAnnouncer {
     private val coroutineScope = CoroutineScope(Dispatchers.Default)
-    private val ipc = KDiscordIPC(BuildKonfig.DISCORD_CLIENT_ID)
-    private var presenceSetByInstance = false
+    private var presenceState = MutableStateFlow<PresenceState>(PresenceNotAnnounced)
 
     init {
+        val ipc = KDiscordIPC(BuildKonfig.DISCORD_CLIENT_ID)
+
         coroutineScope.launch {
             ipc.connect()
+        }
+        coroutineScope.launch {
+            presenceState.collectIndexed { index, value ->
+                // DiscordPresenceAnnouncer always starts out with PresenceNotAnnounced
+                // and unless we have touched the presence state, we don't want IPC to do anything
+                if (index == 0) return@collectIndexed
+
+                when (value) {
+                    PresenceNotAnnounced, is PresencePaused -> ipc.activityManager.clearActivity()
+
+                    is PresenceAnnounced -> {
+                        val details = when (value.type) {
+                            PresenceType.Focus -> "Locked in"
+                            PresenceType.FullRest -> "Taking a break"
+                        }
+                        ipc.activityManager.setActivity(details = details) {
+                            timestamps(start = value.startTime.toEpochMilliseconds())
+                        }
+                    }
+                }
+            }
         }
     }
 
     override fun announcePresence(type: PresenceType) {
-        val details = when (type) {
-            PresenceType.Focus -> "Locked in"
-            PresenceType.FullRest -> "Taking a break"
-        }
+        presenceState.update { oldState ->
+            when (oldState) {
+                PresenceNotAnnounced -> PresenceAnnounced(
+                    type = type,
+                    startTime = Clock.System.now()
+                )
 
-        coroutineScope.launch {
-            ipc.activityManager.setActivity(details = details) {
-                timestamps(start = Clock.System.now().toEpochMilliseconds())
+                is PresenceAnnounced -> when {
+                    oldState.type == type -> oldState
+                    else -> PresenceAnnounced(
+                        type = type,
+                        startTime = Clock.System.now(),
+                    )
+                }
+
+                is PresencePaused -> when {
+                    oldState.type != type -> PresenceAnnounced(
+                        type = type,
+                        startTime = Clock.System.now(),
+                    )
+
+                    else -> {
+                        val now = Clock.System.now()
+                        val pauseDuration = now - oldState.pauseTime
+                        val startTime = when {
+                            pauseDuration > 5.minutes -> now
+                            else -> oldState.startTime + pauseDuration
+                        }
+                        PresenceAnnounced(
+                            type = type,
+                            startTime = startTime,
+                        )
+                    }
+                }
             }
-            presenceSetByInstance = true
+        }
+    }
+
+    override fun pausePresence() {
+        presenceState.update { oldState ->
+            when (oldState) {
+                PresenceNotAnnounced, is PresencePaused -> oldState
+                is PresenceAnnounced -> PresencePaused(
+                    type = oldState.type,
+                    startTime = oldState.startTime,
+                    pauseTime = Clock.System.now(),
+                )
+            }
         }
     }
 
     override fun hidePresence() {
-        coroutineScope.launch {
-            if (presenceSetByInstance) {
-                ipc.activityManager.clearActivity()
-                presenceSetByInstance = false
-            }
-        }
+        presenceState.value = PresenceNotAnnounced
     }
 }

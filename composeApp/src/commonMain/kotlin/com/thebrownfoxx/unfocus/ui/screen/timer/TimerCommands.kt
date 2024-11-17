@@ -9,10 +9,6 @@ import kotlin.time.Duration.Companion.seconds
 
 val TimerViewModel.commands
     get() = listOf(
-        Command(keyword = "presence", argumentCount = 1) { arguments ->
-            val announce = arguments.getOrNull(0) == "true"
-            setAnnouncePresence(announce)
-        },
         Command(keyword = "presence") { toggleAnnouncePresence() },
         Command(keyword = "durations", argumentCount = 8) { arguments ->
             val durations = arguments.minutesSecondsToDurations()
