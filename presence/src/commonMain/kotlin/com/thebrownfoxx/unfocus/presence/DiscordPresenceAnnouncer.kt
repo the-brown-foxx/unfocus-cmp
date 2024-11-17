@@ -44,6 +44,7 @@ class DiscordPresenceAnnouncer : PresenceAnnouncer {
         }
     }
 
+    // TODO: These functions can be refactored out of DiscordPresenceAnnouncer since they aren't specific to Discord
     override fun announcePresence(type: PresenceType) {
         presenceState.update { oldState ->
             when (oldState) {
