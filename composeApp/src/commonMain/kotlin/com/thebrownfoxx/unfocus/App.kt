@@ -29,7 +29,7 @@ fun App(
     onClose: () -> Unit = {}
 ) {
     val viewModel = viewModel {
-        TimerViewModel(dependencies.presenceAnnouncer)
+        TimerViewModel(dependencies.presenceManager)
     }
 
     LaunchedEffect(viewModel.flashTaskbar) {

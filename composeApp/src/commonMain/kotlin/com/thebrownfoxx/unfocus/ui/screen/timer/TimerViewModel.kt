@@ -14,8 +14,8 @@ import com.thebrownfoxx.unfocus.domain.TimerState
 import com.thebrownfoxx.unfocus.domain.UserPhaseCycle
 import com.thebrownfoxx.unfocus.domain.UserPhaseDefinition
 import com.thebrownfoxx.unfocus.domain.UserPhaseDurations
-import com.thebrownfoxx.unfocus.presence.PresenceAnnouncer
-import com.thebrownfoxx.unfocus.presence.PresenceType
+import com.thebrownfoxx.unfocus.presence.manager.PresenceManager
+import com.thebrownfoxx.unfocus.presence.manager.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.getIntroTimerUiState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toUiState
@@ -29,7 +29,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.minutes
 
-class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewModel() {
+class TimerViewModel(private val presenceManager: PresenceManager) : ViewModel() {
     private var timer: Timer? = null
 
     private var phaseDefinition: PhaseDefinition = DefaultPhaseDefinition
@@ -109,16 +109,16 @@ class TimerViewModel(private val presenceAnnouncer: PresenceAnnouncer) : ViewMod
                 Phase.FullRest -> PresenceType.FullRest
                 else -> PresenceType.Focus
             }
-            presenceAnnouncer.announcePresence(type = presenceType)
+            presenceManager.announcePresence(type = presenceType)
         } else {
-            presenceAnnouncer.pausePresence()
+            presenceManager.pausePresence()
         }
     }
 
     fun toggleAnnouncePresence() {
         _announcePresence.update {
             val announcePresence = !it
-            if (!announcePresence) presenceAnnouncer.hidePresence()
+            if (!announcePresence) presenceManager.hidePresence()
             announcePresence
         }
     }

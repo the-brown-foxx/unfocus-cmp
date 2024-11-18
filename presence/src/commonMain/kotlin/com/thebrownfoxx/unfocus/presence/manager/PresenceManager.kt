@@ -1,6 +1,6 @@
-package com.thebrownfoxx.unfocus.presence
+package com.thebrownfoxx.unfocus.presence.manager
 
-interface PresenceAnnouncer {
+interface PresenceManager {
     fun announcePresence(type: PresenceType)
     fun pausePresence()
     fun hidePresence()

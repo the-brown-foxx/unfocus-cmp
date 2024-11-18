@@ -1,7 +1,7 @@
 package com.thebrownfoxx.unfocus.dependency
 
-import com.thebrownfoxx.unfocus.presence.PresenceAnnouncer
+import com.thebrownfoxx.unfocus.presence.manager.PresenceManager
 
 interface Dependencies {
-    val presenceAnnouncer: PresenceAnnouncer
+    val presenceManager: PresenceManager
 }

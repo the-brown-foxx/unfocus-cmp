@@ -1,4 +1,4 @@
-package com.thebrownfoxx.unfocus.presence
+package com.thebrownfoxx.unfocus.presence.manager
 
 import kotlinx.datetime.Instant
 
