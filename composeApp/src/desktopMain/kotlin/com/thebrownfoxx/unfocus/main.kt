@@ -37,7 +37,7 @@ fun main() = application {
                     App(
                         onFlashTaskbar = { Taskbar.getTaskbar().requestWindowUserAttention(window) },
                         onMinimize = { window.isMinimized = true },
-                        onClose = { window.dispose() },
+                        onClose = ::exitApplication,
                     )
                 }
             }

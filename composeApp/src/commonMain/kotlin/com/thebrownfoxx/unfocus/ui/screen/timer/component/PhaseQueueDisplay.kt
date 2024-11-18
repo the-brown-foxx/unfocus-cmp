@@ -39,7 +39,7 @@ fun PhaseQueueIndicator(
                 PhaseTimerType.Focus -> FocusIndicator(progress = progress)
                 BreakTimerType.Eye -> EyeBreakIndicator(progress = progress)
                 BreakTimerType.Sit -> SitBreakIndicator(progress = progress)
-                PhaseTimerType.Rest -> RestIndicator(progress = progress)
+                PhaseTimerType.Rest -> { /*RestIndicator(progress = progress)*/ }
             }
         }
     }
