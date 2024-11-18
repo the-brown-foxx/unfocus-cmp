@@ -14,7 +14,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +53,7 @@ fun SwitchBox(
             modifier = Modifier.size(40.dp),
         ) {
             Box(modifier = Modifier.align(Alignment.Center)) {
-                CompositionLocalProvider(LocalContentColor provides contentColor) {
+                ProvideContentColor(contentColor) {
                     content()
                 }
             }

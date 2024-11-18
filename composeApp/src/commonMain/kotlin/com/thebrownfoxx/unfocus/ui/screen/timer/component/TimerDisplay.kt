@@ -14,17 +14,16 @@ import androidx.compose.material.icons.twotone.Pause
 import androidx.compose.material.icons.twotone.PlayArrow
 import androidx.compose.material.icons.twotone.Stop
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.ui.component.ButtonColors
 import com.thebrownfoxx.unfocus.ui.component.CircleButton
+import com.thebrownfoxx.unfocus.ui.component.ProvideContentColor
 import com.thebrownfoxx.unfocus.ui.component.Spacer
 import com.thebrownfoxx.unfocus.ui.component.buttonColors
 import com.thebrownfoxx.unfocus.ui.extension.toHhSs
@@ -49,7 +48,7 @@ fun TimerDisplay(
         contentColor = clockButtonContentColor,
     )
 
-    CompositionLocalProvider(LocalContentColor provides contentColor) {
+    ProvideContentColor(contentColor) {
         Column(
             verticalArrangement = Arrangement.Center,
             modifier = modifier

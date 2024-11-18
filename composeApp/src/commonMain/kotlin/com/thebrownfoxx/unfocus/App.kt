@@ -12,15 +12,22 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.thebrownfoxx.unfocus.dependency.dependencies
 import com.thebrownfoxx.unfocus.ui.component.CommandInput
+import com.thebrownfoxx.unfocus.ui.component.ProvideContentColor
+import com.thebrownfoxx.unfocus.ui.component.WindowDraggableArea
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerScreen
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerViewModel
 import com.thebrownfoxx.unfocus.ui.screen.timer.commands
+import com.thebrownfoxx.unfocus.ui.screen.timer.component.WindowBar
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.colors
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 @Preview
-fun App(onFlashTaskbar: () -> Unit = {}) {
+fun App(
+    onFlashTaskbar: () -> Unit = {},
+    onMinimize: () -> Unit = {},
+    onClose: () -> Unit = {}
+) {
     val viewModel = viewModel {
         TimerViewModel(dependencies.presenceAnnouncer)
     }
@@ -41,6 +48,15 @@ fun App(onFlashTaskbar: () -> Unit = {}) {
             announcePresence = announcePresence,
             onAnnouncePresenceToggle = viewModel::toggleAnnouncePresence,
         )
+
+        ProvideContentColor(state.colors.contentColor) {
+            WindowDraggableArea {
+                WindowBar(
+                    onMinimize = onMinimize,
+                    onClose = onClose,
+                )
+            }
+        }
 
         CommandInput(
             commands = viewModel.commands,
