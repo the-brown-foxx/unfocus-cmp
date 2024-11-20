@@ -55,12 +55,13 @@ fun App(
                 configurationSheetEventHandler = ConfigurationSheetEventHandler(
                     onShowConfigurationSheet = ::showConfigurationSheet,
                     onHideConfigurationSheet = ::hideConfigurationSheet,
+                    onEyeBreaksChange = ::updateEyeBreaks,
+                    onSitBreaksChange = ::updateSitBreaks,
                     onFocusDurationChange = ::updateFocusDuration,
                     onEyeBreakDurationChange = ::updateEyeBreakDuration,
                     onSitBreakDurationChange = ::updateSitBreakDuration,
                     onFullRestDurationChange = ::updateFullRestDuration,
-                    onEyeBreaksChange = ::updateEyeBreaks,
-                    onSitBreaksChange = ::updateSitBreaks,
+                    onStrideDurationChange = ::updateStrideDuration,
                     onSaveConfiguration = ::saveConfiguration,
                 )
             )

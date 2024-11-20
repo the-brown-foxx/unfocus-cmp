@@ -2,8 +2,10 @@ package com.thebrownfoxx.unfocus.ui.screen.timer.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.twotone.AccessibilityNew
 import androidx.compose.material.icons.twotone.CenterFocusStrong
 import androidx.compose.material.icons.twotone.EmojiFoodBeverage
 import androidx.compose.material.icons.twotone.Save
+import androidx.compose.material.icons.twotone.Timelapse
 import androidx.compose.material.icons.twotone.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -44,6 +47,7 @@ import unfocus.composeapp.generated.resources.full_rest
 import unfocus.composeapp.generated.resources.save
 import unfocus.composeapp.generated.resources.sit_break
 import unfocus.composeapp.generated.resources.sit_breaks
+import unfocus.composeapp.generated.resources.stride
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -124,7 +128,13 @@ private fun Configurator(
                         onDurationChange = onFullRestDurationChange,
                     )
                 }
-                SaveButton(onClick = onSaveConfiguration)
+                FieldRow {
+                    StrideDurationField(
+                        duration = strideDuration,
+                        onDurationChange = onStrideDurationChange,
+                    )
+                    SaveButton(onClick = onSaveConfiguration)
+                }
             }
         }
     }
@@ -138,6 +148,7 @@ private fun FieldRow(content: @Composable RowScope.() -> Unit) {
         content = content,
         modifier = Modifier
             .fillMaxWidth()
+            .height(IntrinsicSize.Min)
             .padding(horizontal = sheetPadding),
     )
 }
@@ -238,6 +249,19 @@ private fun RowScope.FullRestField(
 }
 
 @Composable
+private fun RowScope.StrideDurationField(
+    duration: Duration,
+    onDurationChange: (Duration) -> Unit,
+) {
+    WeightedDurationField(
+        duration = duration,
+        onDurationChange = onDurationChange,
+        leadingIcon = Icons.TwoTone.Timelapse,
+        label = stringResource(Res.string.stride),
+    )
+}
+
+@Composable
 private fun RowScope.WeightedDurationField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
@@ -254,13 +278,12 @@ private fun RowScope.WeightedDurationField(
 }
 
 @Composable
-private fun SaveButton(onClick: () -> Unit) {
+private fun RowScope.SaveButton(onClick: () -> Unit) {
     Button(
         onClick = onClick,
         modifier = Modifier
-            .height(48.dp)
-            .padding(horizontal = sheetPadding)
-            .fillMaxWidth(),
+            .fillMaxHeight()
+            .weight(1f),
     ) {
         Icon(imageVector = Icons.TwoTone.Save, contentDescription = null)
         Spacer(width = 8.dp)

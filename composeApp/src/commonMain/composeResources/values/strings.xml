@@ -32,6 +32,8 @@
     <string name="full_rest_timer">Grab a drink and relax</string>
     <string name="full_rest_expired">Ready to get back to work?</string>
 
+    <string name="stride">Stride</string>
+
     <string name="announce_presence">Announce presence</string>
 
     <string name="save">Save</string>

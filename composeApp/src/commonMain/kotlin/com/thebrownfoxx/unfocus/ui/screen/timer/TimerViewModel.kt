@@ -169,27 +169,134 @@ class TimerViewModel(
         }
     }
 
+    fun hideConfigurationSheet() {
+        _configurationSheetState.value = HiddenConfigurationSheetState
+    }
+
+    fun updateEyeBreaks(eyeBreaks: Int) {
+        val configurationSheetState = _configurationSheetState.value
+        if (configurationSheetState is ShownConfigurationSheetState) {
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    durations = PhaseDurations(
+                        focusDuration = focusDuration,
+                        eyeBreakDuration = eyeBreakDuration,
+                        sitBreakDuration = sitBreakDuration,
+                        fullRestDuration = fullRestDuration,
+                    ),
+                    cycle = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ),
+                )
+
+                _configurationSheetState.value = copy(
+                    eyeBreaks = eyeBreaks,
+                    strideDuration = phaseDefinition.strideDuration,
+                    phaseQueue = phaseDefinition.queue.toUiPhaseQueue(),
+                )
+            }
+        }
+    }
+
+    fun updateSitBreaks(sitBreaks: Int) {
+        val configurationSheetState = _configurationSheetState.value
+        if (configurationSheetState is ShownConfigurationSheetState) {
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    durations = PhaseDurations(
+                        focusDuration = focusDuration,
+                        eyeBreakDuration = eyeBreakDuration,
+                        sitBreakDuration = sitBreakDuration,
+                        fullRestDuration = fullRestDuration,
+                    ),
+                    cycle = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ),
+                )
+
+                _configurationSheetState.value = copy(
+                    sitBreaks = sitBreaks,
+                    strideDuration = phaseDefinition.strideDuration,
+                    phaseQueue = phaseDefinition.queue.toUiPhaseQueue(),
+                )
+            }
+        }
+    }
+
     fun updateFocusDuration(focusDuration: Duration) {
         val configurationSheetState = _configurationSheetState.value
         if (configurationSheetState is ShownConfigurationSheetState) {
-            _configurationSheetState.value =
-                configurationSheetState.copy(focusDuration = focusDuration)
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    durations = PhaseDurations(
+                        focusDuration = focusDuration,
+                        eyeBreakDuration = eyeBreakDuration,
+                        sitBreakDuration = sitBreakDuration,
+                        fullRestDuration = fullRestDuration,
+                    ),
+                    cycle = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ),
+                )
+
+                _configurationSheetState.value = copy(
+                    focusDuration = phaseDefinition.durations.focusDuration,
+                    strideDuration = phaseDefinition.strideDuration,
+                )
+            }
         }
     }
 
     fun updateEyeBreakDuration(eyeBreakDuration: Duration) {
         val configurationSheetState = _configurationSheetState.value
         if (configurationSheetState is ShownConfigurationSheetState) {
-            _configurationSheetState.value =
-                configurationSheetState.copy(eyeBreakDuration = eyeBreakDuration)
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    durations = PhaseDurations(
+                        focusDuration = focusDuration,
+                        eyeBreakDuration = eyeBreakDuration,
+                        sitBreakDuration = sitBreakDuration,
+                        fullRestDuration = fullRestDuration,
+                    ),
+                    cycle = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ),
+                )
+
+                _configurationSheetState.value = copy(
+                    eyeBreakDuration = phaseDefinition.durations.eyeBreakDuration,
+                    strideDuration = phaseDefinition.strideDuration,
+                )
+            }
         }
     }
 
     fun updateSitBreakDuration(sitBreakDuration: Duration) {
         val configurationSheetState = _configurationSheetState.value
         if (configurationSheetState is ShownConfigurationSheetState) {
-            _configurationSheetState.value =
-                configurationSheetState.copy(sitBreakDuration = sitBreakDuration)
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    durations = PhaseDurations(
+                        focusDuration = focusDuration,
+                        eyeBreakDuration = eyeBreakDuration,
+                        sitBreakDuration = sitBreakDuration,
+                        fullRestDuration = fullRestDuration,
+                    ),
+                    cycle = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ),
+                )
+
+                _configurationSheetState.value = copy(
+                    sitBreakDuration = phaseDefinition.durations.sitBreakDuration,
+                    strideDuration = phaseDefinition.strideDuration,
+                )
+            }
         }
     }
 
@@ -201,31 +308,24 @@ class TimerViewModel(
         }
     }
 
-    fun updateEyeBreaks(eyeBreaks: Int) {
+    fun updateStrideDuration(strideDuration: Duration) {
         val configurationSheetState = _configurationSheetState.value
         if (configurationSheetState is ShownConfigurationSheetState) {
-            _configurationSheetState.value =
-                configurationSheetState.copy(
+            with(configurationSheetState) {
+                val phaseDefinition = PhaseDefinition(
+                    strideDuration = strideDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
                     eyeBreaks = eyeBreaks,
-                    phaseQueue = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = configurationSheetState.sitBreaks,
-                    ).queue.toUiPhaseQueue(),
-                )
-        }
-    }
-
-    fun updateSitBreaks(sitBreaks: Int) {
-        val configurationSheetState = _configurationSheetState.value
-        if (configurationSheetState is ShownConfigurationSheetState) {
-            _configurationSheetState.value =
-                configurationSheetState.copy(
                     sitBreaks = sitBreaks,
-                    phaseQueue = PhaseCycle(
-                        eyeBreaks = configurationSheetState.eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ).queue.toUiPhaseQueue(),
                 )
+
+                _configurationSheetState.value = copy(
+                    strideDuration = phaseDefinition.strideDuration,
+                    focusDuration = phaseDefinition.durations.focusDuration,
+                )
+            }
         }
     }
 
@@ -234,22 +334,20 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             viewModelScope.launch {
                 configurator.updateConfiguration { oldConfiguration ->
-                    oldConfiguration.copy(
-                        focusDuration = configurationSheetState.focusDuration,
-                        eyeBreakDuration = configurationSheetState.eyeBreakDuration,
-                        sitBreakDuration = configurationSheetState.sitBreakDuration,
-                        fullRestDuration = configurationSheetState.fullRestDuration,
-                        eyeBreaks = configurationSheetState.eyeBreaks,
-                        sitBreaks = configurationSheetState.sitBreaks,
-                    )
+                    with(configurationSheetState) {
+                        oldConfiguration.copy(
+                            focusDuration = focusDuration,
+                            eyeBreakDuration = eyeBreakDuration,
+                            sitBreakDuration = sitBreakDuration,
+                            fullRestDuration = fullRestDuration,
+                            eyeBreaks = eyeBreaks,
+                            sitBreaks = sitBreaks,
+                        )
+                    }
                 }
             }
             hideConfigurationSheet()
         }
-    }
-
-    fun hideConfigurationSheet() {
-        _configurationSheetState.value = HiddenConfigurationSheetState
     }
 
     private fun TimerState.setPresence() {
