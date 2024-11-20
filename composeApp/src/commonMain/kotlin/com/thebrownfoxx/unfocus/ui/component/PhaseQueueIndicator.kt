@@ -1,18 +1,16 @@
 package com.thebrownfoxx.unfocus.ui.component
 
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -26,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.unit.dp
+import com.thebrownfoxx.unfocus.ui.extension.onlyIfNotNull
+import com.thebrownfoxx.unfocus.ui.extension.sharedZAxisEnter
+import com.thebrownfoxx.unfocus.ui.extension.sharedZAxisExit
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.BreakTimerType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.PhaseTimerType
 
@@ -34,43 +35,50 @@ fun PhaseQueueIndicator(
     phaseIndex: Int,
     phaseProgress: Float,
     phaseQueue: List<PhaseTimerType>,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
 ) {
     AnimatedContent(
         targetState = phaseQueue,
-        modifier = modifier,
-        transitionSpec = {
-            fadeIn() + slideInHorizontally { it } togetherWith
-                    fadeOut(spring(stiffness = Spring.StiffnessHigh))
-        },
+        modifier = modifier.fillMaxWidth(),
+        transitionSpec = { sharedZAxisEnter() togetherWith sharedZAxisExit() },
+        contentAlignment = Alignment.Center,
     ) {
-        PhaseQueueRow(
-            it = it,
-            phaseIndex = phaseIndex,
-            phaseProgress = phaseProgress,
-            onClick = onClick,
-        )
+        Box {
+            PhaseQueueRow(
+                it = it,
+                phaseIndex = phaseIndex,
+                phaseProgress = phaseProgress,
+                onClick = onClick,
+                contentPadding = contentPadding,
+            )
+        }
     }
 }
 
 @Composable
-private fun PhaseQueueRow(
+private fun BoxScope.PhaseQueueRow(
     phaseIndex: Int,
     phaseProgress: Float,
     it: List<PhaseTimerType>,
-    onClick: () -> Unit,
+    onClick: (() -> Unit)?,
+    contentPadding: PaddingValues,
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
+            .align(Alignment.Center)
             .horizontalScroll(rememberScrollState(), enabled = false)
-            .padding(horizontal = 16.dp, vertical = 24.dp)
+            .padding(contentPadding)
             .clip(CircleShape)
             .height(32.dp)
-            .clickable { onClick() }
-            .padding(horizontal = 16.dp),
+            .onlyIfNotNull(onClick) {
+                Modifier
+                    .clickable { it() }
+                    .padding(horizontal = 16.dp)
+            },
     ) {
         for ((index, phase) in it.withIndex()) {
             val progress = when {
@@ -129,7 +137,7 @@ private fun FullRestIndicator(progress: Float) {
 }
 
 @Composable
-fun PhaseIndicator(
+private fun PhaseIndicator(
     progress: Float,
     modifier: Modifier = Modifier,
 ) {

@@ -6,6 +6,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.thebrownfoxx.unfocus.ui.component.PhaseQueueIndicator
 import com.thebrownfoxx.unfocus.ui.component.ProvideContentColor
+import com.thebrownfoxx.unfocus.ui.screen.timer.component.ConfigurationSheet
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerBackground
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TimerDisplay
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.TopBar

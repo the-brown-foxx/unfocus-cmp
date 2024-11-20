@@ -33,52 +33,54 @@ fun App(
         TimerViewModel(dependencies.presenceManager, dependencies.configurator)
     }
 
-    LaunchedEffect(viewModel.flashTaskbar) {
-        viewModel.flashTaskbar.collect {
-            onFlashTaskbar()
-        }
-    }
-
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val announcePresence by viewModel.announcePresence.collectAsStateWithLifecycle()
-    val configurationState by
-        viewModel.configurationSheetState.collectAsStateWithLifecycle()
-
-    Box {
-        TimerScreen(
-            state = state,
-            onTimerButtonClick = viewModel::onTimerButtonClick,
-            announcePresence = announcePresence,
-            onAnnouncePresenceToggle = viewModel::toggleAnnouncePresence,
-            configurationSheetState = configurationState,
-            configurationSheetEventHandler = ConfigurationSheetEventHandler(
-                onShowConfigurationSheet = viewModel::showConfigurationSheet,
-                onHideConfigurationSheet = viewModel::hideConfigurationSheet,
-                onFocusDurationChange = viewModel::updateFocusDuration,
-                onEyeBreakDurationChange = viewModel::updateEyeBreakDuration,
-                onSitBreakDurationChange = viewModel::updateSitBreakDuration,
-                onFullRestDurationChange = viewModel::updateFullRestDuration,
-                onEyeBreaksChange = {},
-                onSitBreaksChange = {},
-                onSaveConfiguration = viewModel::saveConfiguration,
-            )
-        )
-
-        ProvideContentColor(state.colors.contentColor) {
-            WindowDraggableArea {
-                WindowBar(
-                    onMinimize = onMinimize,
-                    onClose = onClose,
-                )
+    with(viewModel) {
+        LaunchedEffect(flashTaskbar) {
+            flashTaskbar.collect {
+                onFlashTaskbar()
             }
         }
 
-        CommandInput(
-            commands = viewModel.commands,
-            contentColor = state.colors.contentColor,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(32.dp),
-        )
+        val state by uiState.collectAsStateWithLifecycle()
+        val announcePresence by announcePresence.collectAsStateWithLifecycle()
+        val configurationState by
+        configurationSheetState.collectAsStateWithLifecycle()
+
+        Box {
+            TimerScreen(
+                state = state,
+                onTimerButtonClick = ::onTimerButtonClick,
+                announcePresence = announcePresence,
+                onAnnouncePresenceToggle = ::toggleAnnouncePresence,
+                configurationSheetState = configurationState,
+                configurationSheetEventHandler = ConfigurationSheetEventHandler(
+                    onShowConfigurationSheet = ::showConfigurationSheet,
+                    onHideConfigurationSheet = ::hideConfigurationSheet,
+                    onFocusDurationChange = ::updateFocusDuration,
+                    onEyeBreakDurationChange = ::updateEyeBreakDuration,
+                    onSitBreakDurationChange = ::updateSitBreakDuration,
+                    onFullRestDurationChange = ::updateFullRestDuration,
+                    onEyeBreaksChange = ::updateEyeBreaks,
+                    onSitBreaksChange = ::updateSitBreaks,
+                    onSaveConfiguration = ::saveConfiguration,
+                )
+            )
+
+            ProvideContentColor(state.colors.contentColor) {
+                WindowDraggableArea {
+                    WindowBar(
+                        onMinimize = onMinimize,
+                        onClose = onClose,
+                    )
+                }
+            }
+
+            CommandInput(
+                commands = commands,
+                contentColor = state.colors.contentColor,
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(32.dp),
+            )
+        }
     }
 }

@@ -2,7 +2,8 @@ package com.thebrownfoxx.unfocus.ui.extension
 
 import kotlin.time.Duration
 
-fun Duration.toHhSs(separator: String = ":") = toComponents { minutes, seconds, _ ->
+// TODO: Support .toHhMmSs()
+fun Duration.toMMSs(separator: String = ":") = toComponents { minutes, seconds, _ ->
     "${minutes.toTwoDigits()}$separator${seconds.toTwoDigits()}"
 }
 

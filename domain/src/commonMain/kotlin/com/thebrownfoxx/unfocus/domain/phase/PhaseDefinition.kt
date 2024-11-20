@@ -21,6 +21,34 @@ data class PhaseDefinition(
         }
 
     val queue: List<Phase> = cycle.queue
+
+    val strideDuration: Duration
+        get() = queue
+            .dropLast(1)
+            .map { it.duration }
+            .reduce { accumulator, duration -> accumulator + duration }
+}
+
+fun PhaseDefinition(
+    strideDuration: Duration,
+    eyeBreakDuration: Duration,
+    sitBreakDuration: Duration,
+    fullRestDuration: Duration,
+    eyeBreaks: Int,
+    sitBreaks: Int,
+): PhaseDefinition {
+    val semiStrideDuration = (strideDuration - sitBreakDuration * sitBreaks) / (sitBreaks + 1)
+    val focusDuration = (semiStrideDuration - eyeBreakDuration * eyeBreaks) / (eyeBreaks + 1)
+
+    return PhaseDefinition(
+        durations = PhaseDurations(
+            focusDuration = focusDuration,
+            eyeBreakDuration = eyeBreakDuration,
+            sitBreakDuration = sitBreakDuration,
+            fullRestDuration = fullRestDuration,
+        ),
+        cycle = PhaseCycle(eyeBreaks = eyeBreaks, sitBreaks = sitBreaks),
+    )
 }
 
 data class PhaseDurations(

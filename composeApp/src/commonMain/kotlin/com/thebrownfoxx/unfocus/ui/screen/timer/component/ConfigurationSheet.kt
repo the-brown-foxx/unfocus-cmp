@@ -1,8 +1,9 @@
-package com.thebrownfoxx.unfocus.ui.screen.timer
+package com.thebrownfoxx.unfocus.ui.screen.timer.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -16,17 +17,20 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.thebrownfoxx.unfocus.ui.component.DurationField
+import com.thebrownfoxx.unfocus.ui.component.PhaseQueueIndicator
 import com.thebrownfoxx.unfocus.ui.component.Spacer
-import com.thebrownfoxx.unfocus.ui.extension.PaddingSide
-import com.thebrownfoxx.unfocus.ui.extension.paddingExcept
+import com.thebrownfoxx.unfocus.ui.extension.bottomPadding
+import com.thebrownfoxx.unfocus.ui.extension.horizontalPadding
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ConfigurationSheetEventHandler
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ShownConfigurationSheetState
@@ -34,10 +38,12 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 import unfocus.composeapp.generated.resources.Res
 import unfocus.composeapp.generated.resources.eye_break
+import unfocus.composeapp.generated.resources.eye_breaks
 import unfocus.composeapp.generated.resources.focus
 import unfocus.composeapp.generated.resources.full_rest
 import unfocus.composeapp.generated.resources.save
 import unfocus.composeapp.generated.resources.sit_break
+import unfocus.composeapp.generated.resources.sit_breaks
 import kotlin.time.Duration
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -79,8 +85,25 @@ private fun Configurator(
         with(eventHandler) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.padding(32.dp.paddingExcept(PaddingSide.Top)),
+                modifier = Modifier.padding(sheetPadding.bottomPadding),
             ) {
+                PhaseQueueIndicator(
+                    phaseIndex = 0,
+                    phaseProgress = 0f,
+                    phaseQueue = phaseQueue,
+                    contentPadding = sheetPadding.horizontalPadding,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+                FieldRow {
+                    EyeBreaksSlider(
+                        value = eyeBreaks,
+                        onValueChange = onEyeBreaksChange,
+                    )
+                    SitBreaksSlider(
+                        value = sitBreaks,
+                        onValueChange = onSitBreaksChange,
+                    )
+                }
                 FieldRow {
                     FocusField(
                         duration = focusDuration,
@@ -90,8 +113,6 @@ private fun Configurator(
                         duration = eyeBreakDuration,
                         onDurationChange = onEyeBreakDurationChange,
                     )
-                }
-                FieldRow {
                     SitBreakField(
                         duration = sitBreakDuration,
                         onDurationChange = onSitBreakDurationChange,
@@ -108,22 +129,66 @@ private fun Configurator(
 }
 
 @Composable
-private fun FieldRow(content: @Composable () -> Unit) {
+private fun FieldRow(content: @Composable RowScope.() -> Unit) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(32.dp, Alignment.CenterHorizontally),
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        content()
+        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
+        content = content,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = sheetPadding),
+    )
+}
+
+@Composable
+private fun RowScope.EyeBreaksSlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+) {
+    FrequencySlider(
+        value = value,
+        onValueChange = onValueChange,
+        label = stringResource(Res.string.eye_breaks),
+    )
+}
+
+@Composable
+fun RowScope.SitBreaksSlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+) {
+    FrequencySlider(
+        value = value,
+        onValueChange = onValueChange,
+        label = stringResource(Res.string.sit_breaks),
+    )
+}
+
+@Composable
+private fun RowScope.FrequencySlider(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    label: String,
+) {
+    val maxValue = 3
+
+    Column(modifier = Modifier.weight(1f)) {
+        Text(text = label)
+        Slider(
+            value = value.toFloat(),
+            onValueChange = { onValueChange(it.toInt()) },
+            valueRange = 0f..maxValue.toFloat(),
+            steps = maxValue - 1,
+        )
     }
 }
 
 @Composable
-private fun FocusField(
+private fun RowScope.FocusField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
 ) {
-    DurationField(
+    WeightedDurationField(
         duration = duration,
         onDurationChange = onDurationChange,
         leadingIcon = Icons.TwoTone.CenterFocusStrong,
@@ -132,11 +197,11 @@ private fun FocusField(
 }
 
 @Composable
-private fun EyeBreakField(
+private fun RowScope.EyeBreakField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
 ) {
-    DurationField(
+    WeightedDurationField(
         duration = duration,
         onDurationChange = onDurationChange,
         leadingIcon = Icons.TwoTone.VisibilityOff,
@@ -145,11 +210,11 @@ private fun EyeBreakField(
 }
 
 @Composable
-private fun SitBreakField(
+private fun RowScope.SitBreakField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
 ) {
-    DurationField(
+    WeightedDurationField(
         duration = duration,
         onDurationChange = onDurationChange,
         leadingIcon = Icons.TwoTone.AccessibilityNew,
@@ -158,15 +223,31 @@ private fun SitBreakField(
 }
 
 @Composable
-private fun FullRestField(
+private fun RowScope.FullRestField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
 ) {
-    DurationField(
+    WeightedDurationField(
         duration = duration,
         onDurationChange = onDurationChange,
         leadingIcon = Icons.TwoTone.EmojiFoodBeverage,
         label = stringResource(Res.string.full_rest),
+    )
+}
+
+@Composable
+fun RowScope.WeightedDurationField(
+    duration: Duration,
+    onDurationChange: (Duration) -> Unit,
+    leadingIcon: ImageVector,
+    label: String,
+) {
+    DurationField(
+        duration = duration,
+        onDurationChange = onDurationChange,
+        leadingIcon = leadingIcon,
+        label = label,
+        modifier = Modifier.weight(1f),
     )
 }
 
@@ -176,6 +257,7 @@ private fun SaveButton(onClick: () -> Unit) {
         onClick = onClick,
         modifier = Modifier
             .height(48.dp)
+            .padding(horizontal = sheetPadding)
             .fillMaxWidth(),
     ) {
         Icon(imageVector = Icons.TwoTone.Save, contentDescription = null)
@@ -183,3 +265,5 @@ private fun SaveButton(onClick: () -> Unit) {
         Text(text = stringResource(Res.string.save))
     }
 }
+
+private val sheetPadding = 32.dp

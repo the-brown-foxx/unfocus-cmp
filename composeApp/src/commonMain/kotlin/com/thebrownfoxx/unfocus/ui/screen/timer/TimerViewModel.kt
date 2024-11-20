@@ -20,8 +20,9 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.state.ConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.HiddenConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ShownConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.getIntroTimerUiState
+import com.thebrownfoxx.unfocus.ui.screen.timer.state.toConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toPhaseDefinition
-import com.thebrownfoxx.unfocus.ui.screen.timer.state.toSheetState
+import com.thebrownfoxx.unfocus.ui.screen.timer.state.toUiPhaseQueue
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toUiState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -124,18 +125,6 @@ class TimerViewModel(
         }
     }
 
-    private fun TimerState.setPresence() {
-        if (!this.values.paused) {
-            val presenceType = when (phase) {
-                Phase.FullRest -> PresenceType.FullRest
-                else -> PresenceType.Focus
-            }
-            presenceManager.announcePresence(type = presenceType)
-        } else {
-            presenceManager.pausePresence()
-        }
-    }
-
     fun toggleAnnouncePresence() {
         viewModelScope.launch {
             configurator.updateConfiguration { oldConfiguration ->
@@ -174,7 +163,9 @@ class TimerViewModel(
 
     fun showConfigurationSheet() {
         viewModelScope.launch {
-            _configurationSheetState.value = configurator.configuration.first().toSheetState()
+            _configurationSheetState.value = configurator.configuration.first()
+                .toPhaseDefinition()
+                .toConfigurationSheetState()
         }
     }
 
@@ -210,6 +201,34 @@ class TimerViewModel(
         }
     }
 
+    fun updateEyeBreaks(eyeBreaks: Int) {
+        val configurationSheetState = _configurationSheetState.value
+        if (configurationSheetState is ShownConfigurationSheetState) {
+            _configurationSheetState.value =
+                configurationSheetState.copy(
+                    eyeBreaks = eyeBreaks,
+                    phaseQueue = PhaseCycle(
+                        eyeBreaks = eyeBreaks,
+                        sitBreaks = configurationSheetState.sitBreaks,
+                    ).queue.toUiPhaseQueue(),
+                )
+        }
+    }
+
+    fun updateSitBreaks(sitBreaks: Int) {
+        val configurationSheetState = _configurationSheetState.value
+        if (configurationSheetState is ShownConfigurationSheetState) {
+            _configurationSheetState.value =
+                configurationSheetState.copy(
+                    sitBreaks = sitBreaks,
+                    phaseQueue = PhaseCycle(
+                        eyeBreaks = configurationSheetState.eyeBreaks,
+                        sitBreaks = sitBreaks,
+                    ).queue.toUiPhaseQueue(),
+                )
+        }
+    }
+
     fun saveConfiguration() {
         val configurationSheetState = _configurationSheetState.value
         if (configurationSheetState is ShownConfigurationSheetState) {
@@ -231,6 +250,18 @@ class TimerViewModel(
 
     fun hideConfigurationSheet() {
         _configurationSheetState.value = HiddenConfigurationSheetState
+    }
+
+    private fun TimerState.setPresence() {
+        if (!this.values.paused) {
+            val presenceType = when (phase) {
+                Phase.FullRest -> PresenceType.FullRest
+                else -> PresenceType.Focus
+            }
+            presenceManager.announcePresence(type = presenceType)
+        } else {
+            presenceManager.pausePresence()
+        }
     }
 
     private fun setPhaseDefinition(phaseDefinition: PhaseDefinition) {

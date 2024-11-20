@@ -12,6 +12,7 @@ data class ShownConfigurationSheetState(
     val fullRestDuration: Duration,
     val eyeBreaks: Int,
     val sitBreaks: Int,
+    val strideDuration: Duration,
 ) : ConfigurationSheetState
 
 data object HiddenConfigurationSheetState : ConfigurationSheetState

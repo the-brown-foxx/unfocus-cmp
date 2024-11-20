@@ -13,7 +13,7 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.thebrownfoxx.unfocus.ui.extension.toHhSs
+import com.thebrownfoxx.unfocus.ui.extension.toMMSs
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -26,7 +26,7 @@ fun DurationField(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember(duration) { mutableStateOf(TextFieldValue(duration.toHhSs())) }
+    var textFieldValue by remember(duration) { mutableStateOf(TextFieldValue(duration.toMMSs())) }
 
     TextField(
         value = textFieldValue,

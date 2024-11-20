@@ -13,12 +13,14 @@
     <string name="focus_expired">Break time</string>
 
     <string name="eye_break">Eye break</string>
+    <string name="eye_breaks">Eye breaks</string>
     <string name="eye_break_paused">Eye break paused</string>
     <string name="eye_break_instruction">Look away from your screen</string>
     <string name="eye_break_timer">Keep your eyes off the screen</string>
     <string name="eye_break_expired">Your eyes are ready to get back to work</string>
 
     <string name="sit_break">Sit break</string>
+    <string name="sit_breaks">Sit breaks</string>
     <string name="sit_break_paused">Sit break paused</string>
     <string name="sit_break_instruction">Stand up</string>
     <string name="sit_break_timer">Move around</string>

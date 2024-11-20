@@ -26,7 +26,7 @@ import com.thebrownfoxx.unfocus.ui.component.CircleButton
 import com.thebrownfoxx.unfocus.ui.component.ProvideContentColor
 import com.thebrownfoxx.unfocus.ui.component.Spacer
 import com.thebrownfoxx.unfocus.ui.component.buttonColors
-import com.thebrownfoxx.unfocus.ui.extension.toHhSs
+import com.thebrownfoxx.unfocus.ui.extension.toMMSs
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerButtonState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerUiState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.colors
@@ -96,7 +96,7 @@ private fun Duration(
             )
         }
         Text(
-            text = duration.toHhSs(separator = " "),
+            text = duration.toMMSs(separator = " "),
             style = style,
         )
     }
