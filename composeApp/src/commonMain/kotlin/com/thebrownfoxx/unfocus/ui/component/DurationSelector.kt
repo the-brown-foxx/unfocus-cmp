@@ -13,8 +13,9 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
-import com.thebrownfoxx.unfocus.ui.extension.toMMSs
+import com.thebrownfoxx.unfocus.ui.extension.toHhMmSs
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
@@ -26,7 +27,7 @@ fun DurationField(
     label: String,
     modifier: Modifier = Modifier,
 ) {
-    var textFieldValue by remember(duration) { mutableStateOf(TextFieldValue(duration.toMMSs())) }
+    var textFieldValue by remember(duration) { mutableStateOf(TextFieldValue(duration.toHhMmSs())) }
 
     TextField(
         value = textFieldValue,
@@ -34,8 +35,8 @@ fun DurationField(
             val newText = newValue.text
             if (
                 newText.all { it.isDigit() || it == ':' } &&
-                newText.count { it == ':' } <= 1 &&
-                newText.length <= 6
+                newText.count { it == ':' } <= 2 &&
+                newText.length <= 8
             ) {
                 textFieldValue = newValue
             }
@@ -63,13 +64,17 @@ fun DurationField(
 }
 
 private fun String.parseDuration(): Duration {
-    val (minutes, seconds) = if (contains(':')) split(':') else {
+    val timeUnits = if (contains(':')) split(':') else {
         val seconds = takeLast(2)
         val minutes = removeSuffix(seconds)
         listOf(minutes, seconds)
-    }.map { it.toIntOrNull() ?: 0 }
+    }.map { it.toIntOrNull() ?: 0 }.reversed()
 
-    return minutes.minutes + seconds.seconds
+    val hours = timeUnits.getOrNull(2) ?: 0
+    val minutes = timeUnits.getOrNull(1) ?: 0
+    val seconds = timeUnits.getOrNull(0) ?: 0
+
+    return hours.hours + minutes.minutes + seconds.seconds
 }
 
 //@Composable

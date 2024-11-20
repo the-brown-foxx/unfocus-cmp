@@ -113,6 +113,8 @@ private fun Configurator(
                         duration = eyeBreakDuration,
                         onDurationChange = onEyeBreakDurationChange,
                     )
+                }
+                FieldRow {
                     SitBreakField(
                         duration = sitBreakDuration,
                         onDurationChange = onSitBreakDurationChange,
@@ -153,7 +155,7 @@ private fun RowScope.EyeBreaksSlider(
 }
 
 @Composable
-fun RowScope.SitBreaksSlider(
+private fun RowScope.SitBreaksSlider(
     value: Int,
     onValueChange: (Int) -> Unit,
 ) {
@@ -236,7 +238,7 @@ private fun RowScope.FullRestField(
 }
 
 @Composable
-fun RowScope.WeightedDurationField(
+private fun RowScope.WeightedDurationField(
     duration: Duration,
     onDurationChange: (Duration) -> Unit,
     leadingIcon: ImageVector,
