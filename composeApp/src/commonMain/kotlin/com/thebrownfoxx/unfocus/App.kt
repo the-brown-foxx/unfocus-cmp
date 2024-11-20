@@ -18,6 +18,7 @@ import com.thebrownfoxx.unfocus.ui.screen.timer.TimerScreen
 import com.thebrownfoxx.unfocus.ui.screen.timer.TimerViewModel
 import com.thebrownfoxx.unfocus.ui.screen.timer.commands
 import com.thebrownfoxx.unfocus.ui.screen.timer.component.WindowBar
+import com.thebrownfoxx.unfocus.ui.screen.timer.state.ConfigurationSheetEventHandler
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.colors
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -29,7 +30,7 @@ fun App(
     onClose: () -> Unit = {}
 ) {
     val viewModel = viewModel {
-        TimerViewModel(dependencies.presenceManager)
+        TimerViewModel(dependencies.presenceManager, dependencies.configurator)
     }
 
     LaunchedEffect(viewModel.flashTaskbar) {
@@ -40,6 +41,8 @@ fun App(
 
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val announcePresence by viewModel.announcePresence.collectAsStateWithLifecycle()
+    val configurationState by
+        viewModel.configurationSheetState.collectAsStateWithLifecycle()
 
     Box {
         TimerScreen(
@@ -47,6 +50,18 @@ fun App(
             onTimerButtonClick = viewModel::onTimerButtonClick,
             announcePresence = announcePresence,
             onAnnouncePresenceToggle = viewModel::toggleAnnouncePresence,
+            configurationSheetState = configurationState,
+            configurationSheetEventHandler = ConfigurationSheetEventHandler(
+                onShowConfigurationSheet = viewModel::showConfigurationSheet,
+                onHideConfigurationSheet = viewModel::hideConfigurationSheet,
+                onFocusDurationChange = viewModel::updateFocusDuration,
+                onEyeBreakDurationChange = viewModel::updateEyeBreakDuration,
+                onSitBreakDurationChange = viewModel::updateSitBreakDuration,
+                onFullRestDurationChange = viewModel::updateFullRestDuration,
+                onEyeBreaksChange = {},
+                onSitBreaksChange = {},
+                onSaveConfiguration = viewModel::saveConfiguration,
+            )
         )
 
         ProvideContentColor(state.colors.contentColor) {

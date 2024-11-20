@@ -32,3 +32,4 @@ dependencyResolutionManagement {
 include(":composeApp")
 include(":domain")
 include(":presence")
+include(":configurator")

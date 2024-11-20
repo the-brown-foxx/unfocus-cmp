@@ -6,25 +6,31 @@
 
     <string name="intro">Lock in?</string>
 
+    <string name="focus">Focus</string>
     <string name="focus_paused">Focus paused</string>
     <string name="focus_instruction">Start focusing</string>
     <string name="focus_timer">Locked in</string>
     <string name="focus_expired">Break time</string>
 
+    <string name="eye_break">Eye break</string>
     <string name="eye_break_paused">Eye break paused</string>
     <string name="eye_break_instruction">Look away from your screen</string>
     <string name="eye_break_timer">Keep your eyes off the screen</string>
     <string name="eye_break_expired">Your eyes are ready to get back to work</string>
 
+    <string name="sit_break">Sit break</string>
     <string name="sit_break_paused">Sit break paused</string>
     <string name="sit_break_instruction">Stand up</string>
     <string name="sit_break_timer">Move around</string>
     <string name="sit_break_expired">You can now sit for another hour</string>
 
+    <string name="full_rest">Full rest</string>
     <string name="full_rest_paused">Full rest paused</string>
     <string name="full_rest_instruction">Take a break</string>
     <string name="full_rest_timer">Grab a drink and relax</string>
     <string name="full_rest_expired">Ready to get back to work?</string>
 
     <string name="announce_presence">Announce presence</string>
+
+    <string name="save">Save</string>
 </resources>

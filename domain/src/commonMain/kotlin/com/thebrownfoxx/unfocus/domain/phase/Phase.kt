@@ -1,4 +1,4 @@
-package com.thebrownfoxx.unfocus.domain
+package com.thebrownfoxx.unfocus.domain.phase
 
 enum class Phase {
     Focus,

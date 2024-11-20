@@ -1,5 +1,7 @@
-package com.thebrownfoxx.unfocus.domain
+package com.thebrownfoxx.unfocus.domain.timer
 
+import com.thebrownfoxx.unfocus.domain.Ticker
+import com.thebrownfoxx.unfocus.domain.phase.PhaseDefinition
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -10,13 +12,11 @@ import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.milliseconds
 
-class Timer(
-    private val phaseDefinition: PhaseDefinition,
-) : PhaseDefinition by phaseDefinition {
+class Timer(private val phaseDefinition: PhaseDefinition) {
     private val _state = MutableStateFlow(
         TimerState(
             phaseIndex = 0,
-            phaseQueue = queue,
+            phaseQueue = phaseDefinition.queue,
         )
     )
     val state = _state.asStateFlow()
@@ -59,7 +59,7 @@ class Timer(
     }
 
     fun skipPhase() {
-        _state.update { it.next }
+        _state.update { it.next.copy(values = Instruction(paused = true)) }
     }
 
     fun cancel() {
@@ -79,7 +79,7 @@ class Timer(
                             values.copy(duration = values.duration + elapsed)
                         } else {
                             ticker.cancel()
-                            MainTimer(duration = phase.duration)
+                            MainTimer(duration = with(phaseDefinition) { phase.duration })
                         }
                     it.copy(values = values)
                 }

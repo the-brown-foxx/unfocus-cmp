@@ -1,5 +1,6 @@
-package com.thebrownfoxx.unfocus.domain
+package com.thebrownfoxx.unfocus.domain.timer
 
+import com.thebrownfoxx.unfocus.domain.phase.Phase
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.seconds
 

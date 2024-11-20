@@ -40,6 +40,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(projects.domain)
             implementation(projects.presence)
+            implementation(projects.configurator)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

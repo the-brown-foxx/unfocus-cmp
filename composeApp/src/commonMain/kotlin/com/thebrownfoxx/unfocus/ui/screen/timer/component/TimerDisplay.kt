@@ -96,7 +96,7 @@ private fun Duration(
             )
         }
         Text(
-            text = duration.toHhSs(),
+            text = duration.toHhSs(separator = " "),
             style = style,
         )
     }

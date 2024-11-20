@@ -1,11 +1,11 @@
 package com.thebrownfoxx.unfocus.ui.screen.timer.state
 
-import com.thebrownfoxx.unfocus.domain.Expired
-import com.thebrownfoxx.unfocus.domain.Instruction
-import com.thebrownfoxx.unfocus.domain.MainTimer
-import com.thebrownfoxx.unfocus.domain.Phase
-import com.thebrownfoxx.unfocus.domain.PhaseDefinition
-import com.thebrownfoxx.unfocus.domain.TimerState
+import com.thebrownfoxx.unfocus.domain.phase.Phase
+import com.thebrownfoxx.unfocus.domain.phase.PhaseDefinition
+import com.thebrownfoxx.unfocus.domain.timer.Expired
+import com.thebrownfoxx.unfocus.domain.timer.Instruction
+import com.thebrownfoxx.unfocus.domain.timer.MainTimer
+import com.thebrownfoxx.unfocus.domain.timer.TimerState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.EyeBreakExpired
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.EyeBreakInstruction
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.TimerHeader.EyeBreakPaused
