@@ -42,8 +42,7 @@ fun App(
 
         val state by uiState.collectAsStateWithLifecycle()
         val announcePresence by announcePresence.collectAsStateWithLifecycle()
-        val configurationState by
-        configurationSheetState.collectAsStateWithLifecycle()
+        val configurationState by configurationSheetState.collectAsStateWithLifecycle()
 
         Box {
             TimerScreen(

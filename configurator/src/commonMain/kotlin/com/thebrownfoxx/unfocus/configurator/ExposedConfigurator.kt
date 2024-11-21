@@ -1,13 +1,9 @@
 package com.thebrownfoxx.unfocus.configurator
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.plus
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -36,15 +32,10 @@ class ExposedConfigurator(database: Database) : Configurator {
     private val _configuration = MutableStateFlow(Configuration.Default)
     override val configuration: Flow<Configuration> = _configuration.asStateFlow()
 
-    private val coroutineScope = CoroutineScope(Dispatchers.IO) + SupervisorJob()
-
     init {
         transaction(database) {
             SchemaUtils.create(ConfigurationTable)
-        }
-
-        coroutineScope.launch {
-            _configuration.value = dbQuery { getLatestConfiguration() }
+            _configuration.value = getLatestConfiguration()
         }
     }
 
