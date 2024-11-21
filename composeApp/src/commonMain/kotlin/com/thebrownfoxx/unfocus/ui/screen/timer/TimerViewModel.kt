@@ -163,9 +163,8 @@ class TimerViewModel(
 
     fun showConfigurationSheet() {
         viewModelScope.launch {
-            _configurationSheetState.value = configurator.configuration.first()
-                .toPhaseDefinition()
-                .toConfigurationSheetState()
+            _configurationSheetState.value =
+                configurator.configuration.first().toPhaseDefinition().toConfigurationSheetState()
         }
     }
 
