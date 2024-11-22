@@ -51,7 +51,8 @@ fun DurationField(
                 .dropWhile { it == '0' }
                 .padStart(length = length, padChar = '0')
             if (newText.length == length) {
-                textFieldValue = TextFieldValue(text = newText, selection = TextRange(length, length))
+                textFieldValue =
+                    TextFieldValue(text = newText, selection = TextRange(length, length))
                 onDurationChange(newText.parseDuration())
             }
         },
@@ -79,32 +80,13 @@ fun DurationField(
 
 private val DurationFieldTransformation = VisualTransformation {
     val timeUnits = it.text.reverseChunked(size = 2, limit = 3)
-
     val formattedString = timeUnits.reversed().joinToString(":")
-
-    val offsetMapping = getDurationFieldOffsetMapping(
-        originalString = it.text,
-        formattedString = formattedString,
-    )
-
-    TransformedText(AnnotatedString(formattedString), offsetMapping)
+    TransformedText(AnnotatedString(formattedString), durationFieldOffsetMapping)
 }
 
-private fun getDurationFieldOffsetMapping(
-    originalString: String,
-    formattedString: String,
-) = object : OffsetMapping {
-    private val colons = formattedString.count { it == ':' }
-
-    override fun originalToTransformed(offset: Int): Int {
-        val offsetFromEnd = originalString.length - offset
-        return 8
-    }
-
-    override fun transformedToOriginal(offset: Int): Int {
-        val offsetFromEnd = formattedString.length - offset
-        return 6
-    }
+private val durationFieldOffsetMapping = object : OffsetMapping {
+    override fun originalToTransformed(offset: Int) = 8
+    override fun transformedToOriginal(offset: Int) = 6
 }
 
 private fun String.parseDuration(): Duration {
@@ -116,75 +98,3 @@ private fun String.parseDuration(): Duration {
 
     return hours.hours + minutes.minutes + seconds.seconds
 }
-
-//@Composable
-//fun DurationField(
-//    duration: Duration,
-//    onDurationChange: (Duration) -> Unit,
-//    modifier: Modifier = Modifier,
-//) {
-//    val (minutes, seconds) = duration.toComponents { minutes, seconds, _ ->
-//        minutes to seconds
-//    }
-//
-//    Row(modifier = modifier) {
-//        DurationComponentField(
-//            value = minutes.toString(),
-//            onValueChange = {
-//                val newMinutes = it.toIntOrNull()
-//                if (newMinutes != null) {
-//                    onDurationChange(newMinutes.minutes + seconds.seconds)
-//                }
-//            },
-//            roundedCorners = RoundedCorners(Side.Start),
-//        )
-//        Spacer(width = 8.dp)
-//        DurationComponentField(
-//            value = seconds.toTwoDigits(),
-//            onValueChange = {
-//                val newSeconds = it.toIntOrNull()
-//                if (newSeconds != null) {
-//                    onDurationChange(minutes.minutes + newSeconds.seconds)
-//                }
-//            },
-//            roundedCorners = RoundedCorners(Side.End),
-//        )
-//    }
-//}
-//
-//@Composable
-//private fun DurationComponentField(
-//    value: String,
-//    onValueChange: (String) -> Unit,
-//    roundedCorners: RoundedCorners,
-//    modifier: Modifier = Modifier,
-//) {
-//    var textFieldValue by remember(value) { mutableStateOf(TextFieldValue(value)) }
-//
-//    TextField(
-//        value = textFieldValue,
-//        onValueChange = { onValueChange(it.text) },
-//        shape = roundedCorners.toShape(),
-//        singleLine = true,
-//        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-//        colors = TextFieldDefaults.colors(
-//            focusedIndicatorColor = Color.Transparent,
-//            unfocusedIndicatorColor = Color.Transparent,
-//        ),
-//        modifier = modifier
-//            .width(96.dp)
-//            .onFocusChanged {
-//                textFieldValue = when {
-//                    it.isFocused -> {
-//                        val selection = TextRange(
-//                            start = 0,
-//                            end = value.length,
-//                        )
-//                        textFieldValue.copy(selection = selection)
-//                    }
-//
-//                    else -> textFieldValue.copy(selection = TextRange(0))
-//                }
-//            },
-//    )
-//}
