@@ -18,6 +18,7 @@ import com.thebrownfoxx.unfocus.presence.manager.PresenceManager
 import com.thebrownfoxx.unfocus.presence.manager.PresenceType
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.HiddenConfigurationSheetState
+import com.thebrownfoxx.unfocus.ui.screen.timer.state.LockedConfigurationSheetField
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.ShownConfigurationSheetState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.getIntroTimerUiState
 import com.thebrownfoxx.unfocus.ui.screen.timer.state.toConfigurationSheetState
@@ -42,7 +43,7 @@ import kotlinx.coroutines.flow.runningFold
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
-import kotlin.time.Duration.Companion.seconds
+import kotlin.time.Duration.Companion.minutes
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class TimerViewModel(
@@ -89,7 +90,7 @@ class TimerViewModel(
             newTimer
         }
 
-        val beepInterval = 30.seconds
+        val beepInterval = 1.minutes
         var periodicBeeper: PeriodicBeeper? = null
         viewModelScope.launch {
             timer.collectLatest { timer ->
@@ -177,20 +178,19 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             with(configurationSheetState) {
                 val phaseDefinition = PhaseDefinition(
-                    durations = PhaseDurations(
-                        focusDuration = focusDuration,
-                        eyeBreakDuration = eyeBreakDuration,
-                        sitBreakDuration = sitBreakDuration,
-                        fullRestDuration = fullRestDuration,
-                    ),
-                    cycle = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ),
+                    lockedField = lockedField,
+                    focusDuration = focusDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
+                    strideDuration = strideDuration,
+                    eyeBreaks = eyeBreaks,
+                    sitBreaks = sitBreaks,
                 )
 
                 _configurationSheetState.value = copy(
                     eyeBreaks = eyeBreaks,
+                    focusDuration = phaseDefinition.durations.focusDuration,
                     strideDuration = phaseDefinition.strideDuration,
                     phaseQueue = phaseDefinition.queue.toUiPhaseQueue(),
                 )
@@ -203,20 +203,19 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             with(configurationSheetState) {
                 val phaseDefinition = PhaseDefinition(
-                    durations = PhaseDurations(
-                        focusDuration = focusDuration,
-                        eyeBreakDuration = eyeBreakDuration,
-                        sitBreakDuration = sitBreakDuration,
-                        fullRestDuration = fullRestDuration,
-                    ),
-                    cycle = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ),
+                    lockedField = lockedField,
+                    focusDuration = focusDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
+                    strideDuration = strideDuration,
+                    eyeBreaks = eyeBreaks,
+                    sitBreaks = sitBreaks,
                 )
 
                 _configurationSheetState.value = copy(
                     sitBreaks = sitBreaks,
+                    focusDuration = phaseDefinition.durations.focusDuration,
                     strideDuration = phaseDefinition.strideDuration,
                     phaseQueue = phaseDefinition.queue.toUiPhaseQueue(),
                 )
@@ -229,21 +228,20 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             with(configurationSheetState) {
                 val phaseDefinition = PhaseDefinition(
-                    durations = PhaseDurations(
-                        focusDuration = focusDuration,
-                        eyeBreakDuration = eyeBreakDuration,
-                        sitBreakDuration = sitBreakDuration,
-                        fullRestDuration = fullRestDuration,
-                    ),
-                    cycle = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ),
+                    lockedField = lockedField,
+                    focusDuration = focusDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
+                    strideDuration = strideDuration,
+                    eyeBreaks = eyeBreaks,
+                    sitBreaks = sitBreaks,
                 )
 
                 _configurationSheetState.value = copy(
                     focusDuration = phaseDefinition.durations.focusDuration,
                     strideDuration = phaseDefinition.strideDuration,
+                    lockedField = LockedConfigurationSheetField.FocusDuration,
                 )
             }
         }
@@ -254,21 +252,21 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             with(configurationSheetState) {
                 val phaseDefinition = PhaseDefinition(
-                    durations = PhaseDurations(
-                        focusDuration = focusDuration,
-                        eyeBreakDuration = eyeBreakDuration,
-                        sitBreakDuration = sitBreakDuration,
-                        fullRestDuration = fullRestDuration,
-                    ),
-                    cycle = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ),
+                    lockedField = lockedField,
+                    focusDuration = focusDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
+                    strideDuration = strideDuration,
+                    eyeBreaks = eyeBreaks,
+                    sitBreaks = sitBreaks,
                 )
 
                 _configurationSheetState.value = copy(
                     eyeBreakDuration = phaseDefinition.durations.eyeBreakDuration,
+                    focusDuration = phaseDefinition.durations.focusDuration,
                     strideDuration = phaseDefinition.strideDuration,
+                    lockedField = LockedConfigurationSheetField.StrideDuration,
                 )
             }
         }
@@ -279,20 +277,19 @@ class TimerViewModel(
         if (configurationSheetState is ShownConfigurationSheetState) {
             with(configurationSheetState) {
                 val phaseDefinition = PhaseDefinition(
-                    durations = PhaseDurations(
-                        focusDuration = focusDuration,
-                        eyeBreakDuration = eyeBreakDuration,
-                        sitBreakDuration = sitBreakDuration,
-                        fullRestDuration = fullRestDuration,
-                    ),
-                    cycle = PhaseCycle(
-                        eyeBreaks = eyeBreaks,
-                        sitBreaks = sitBreaks,
-                    ),
+                    lockedField = lockedField,
+                    focusDuration = focusDuration,
+                    eyeBreakDuration = eyeBreakDuration,
+                    sitBreakDuration = sitBreakDuration,
+                    fullRestDuration = fullRestDuration,
+                    strideDuration = strideDuration,
+                    eyeBreaks = eyeBreaks,
+                    sitBreaks = sitBreaks,
                 )
 
                 _configurationSheetState.value = copy(
                     sitBreakDuration = phaseDefinition.durations.sitBreakDuration,
+                    focusDuration = phaseDefinition.durations.focusDuration,
                     strideDuration = phaseDefinition.strideDuration,
                 )
             }
@@ -321,10 +318,21 @@ class TimerViewModel(
                 )
 
                 _configurationSheetState.value = copy(
-                    strideDuration = phaseDefinition.strideDuration,
+                    strideDuration = strideDuration,
                     focusDuration = phaseDefinition.durations.focusDuration,
+                    lockedField = LockedConfigurationSheetField.StrideDuration,
                 )
             }
+        }
+    }
+
+    fun updateLockedConfigurationSheetField(
+        lockedConfigurationSheetField: LockedConfigurationSheetField,
+    ) {
+        val configurationSheetState = _configurationSheetState.value
+        if (configurationSheetState is ShownConfigurationSheetState) {
+            _configurationSheetState.value =
+                configurationSheetState.copy(lockedField = lockedConfigurationSheetField)
         }
     }
 
@@ -359,6 +367,39 @@ class TimerViewModel(
         } else {
             presenceManager.pausePresence()
         }
+    }
+
+    private fun PhaseDefinition(
+        lockedField: LockedConfigurationSheetField,
+        focusDuration: Duration,
+        eyeBreakDuration: Duration,
+        sitBreakDuration: Duration,
+        fullRestDuration: Duration,
+        strideDuration: Duration,
+        eyeBreaks: Int,
+        sitBreaks: Int,
+    ) = when (lockedField) {
+        LockedConfigurationSheetField.FocusDuration -> PhaseDefinition(
+            durations = PhaseDurations(
+                focusDuration = focusDuration,
+                eyeBreakDuration = eyeBreakDuration,
+                sitBreakDuration = sitBreakDuration,
+                fullRestDuration = fullRestDuration,
+            ),
+            cycle = PhaseCycle(
+                eyeBreaks = eyeBreaks,
+                sitBreaks = sitBreaks,
+            ),
+        )
+
+        LockedConfigurationSheetField.StrideDuration -> PhaseDefinition(
+            strideDuration = strideDuration,
+            eyeBreakDuration = eyeBreakDuration,
+            sitBreakDuration = sitBreakDuration,
+            fullRestDuration = fullRestDuration,
+            eyeBreaks = eyeBreaks,
+            sitBreaks = sitBreaks,
+        )
     }
 
     private fun setPhaseDefinition(phaseDefinition: PhaseDefinition) {

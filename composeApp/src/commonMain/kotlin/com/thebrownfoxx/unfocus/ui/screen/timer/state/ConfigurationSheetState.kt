@@ -13,6 +13,12 @@ data class ShownConfigurationSheetState(
     val eyeBreaks: Int,
     val sitBreaks: Int,
     val strideDuration: Duration,
+    val lockedField: LockedConfigurationSheetField = LockedConfigurationSheetField.FocusDuration,
 ) : ConfigurationSheetState
+
+enum class LockedConfigurationSheetField {
+    FocusDuration,
+    StrideDuration,
+}
 
 data object HiddenConfigurationSheetState : ConfigurationSheetState

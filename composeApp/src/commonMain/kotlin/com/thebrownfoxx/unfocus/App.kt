@@ -61,6 +61,7 @@ fun App(
                     onSitBreakDurationChange = ::updateSitBreakDuration,
                     onFullRestDurationChange = ::updateFullRestDuration,
                     onStrideDurationChange = ::updateStrideDuration,
+                    onLockedConfigurationSheetFieldChange = ::updateLockedConfigurationSheetField,
                     onSaveConfiguration = ::saveConfiguration,
                 )
             )

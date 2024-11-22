@@ -39,10 +39,12 @@ fun PhaseDefinition(
 ): PhaseDefinition {
     val semiStrideDuration = (strideDuration - sitBreakDuration * sitBreaks) / (sitBreaks + 1)
     val focusDuration = (semiStrideDuration - eyeBreakDuration * eyeBreaks) / (eyeBreaks + 1)
+    val normalizedFocusDuration =
+        if (focusDuration < Duration.ZERO) Duration.ZERO else focusDuration
 
     return PhaseDefinition(
         durations = PhaseDurations(
-            focusDuration = focusDuration,
+            focusDuration = normalizedFocusDuration,
             eyeBreakDuration = eyeBreakDuration,
             sitBreakDuration = sitBreakDuration,
             fullRestDuration = fullRestDuration,

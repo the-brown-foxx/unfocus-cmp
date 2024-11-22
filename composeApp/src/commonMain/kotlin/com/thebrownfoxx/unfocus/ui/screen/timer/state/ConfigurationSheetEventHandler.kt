@@ -12,6 +12,7 @@ class ConfigurationSheetEventHandler(
     val onSitBreakDurationChange: (Duration) -> Unit,
     val onFullRestDurationChange: (Duration) -> Unit,
     val onStrideDurationChange: (Duration) -> Unit,
+    val onLockedConfigurationSheetFieldChange: (LockedConfigurationSheetField) -> Unit,
     val onSaveConfiguration: () -> Unit,
 ) {
     companion object {
@@ -25,6 +26,7 @@ class ConfigurationSheetEventHandler(
             onSitBreakDurationChange = {},
             onFullRestDurationChange = {},
             onStrideDurationChange = {},
+            onLockedConfigurationSheetFieldChange = {},
             onSaveConfiguration = {},
         )
     }
@@ -39,6 +41,8 @@ class ConfigurationSheetEventHandler(
         onSitBreakDurationChange: (Duration) -> Unit = this.onSitBreakDurationChange,
         onFullRestDurationChange: (Duration) -> Unit = this.onFullRestDurationChange,
         onStrideDurationChange: (Duration) -> Unit = this.onStrideDurationChange,
+        onLockedConfigurationSheetFieldChange: (LockedConfigurationSheetField) -> Unit =
+            this.onLockedConfigurationSheetFieldChange,
         onSaveConfiguration: () -> Unit = this.onSaveConfiguration,
     ) = ConfigurationSheetEventHandler(
         onShowConfigurationSheet = onShowConfigurationSheet,
@@ -50,6 +54,7 @@ class ConfigurationSheetEventHandler(
         onEyeBreaksChange = onEyeBreaksChange,
         onSitBreaksChange = onSitBreaksChange,
         onStrideDurationChange = onStrideDurationChange,
+        onLockedConfigurationSheetFieldChange = onLockedConfigurationSheetFieldChange,
         onSaveConfiguration = onSaveConfiguration,
     )
 }
