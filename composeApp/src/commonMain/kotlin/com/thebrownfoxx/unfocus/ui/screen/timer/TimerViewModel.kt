@@ -34,6 +34,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -137,10 +138,9 @@ class TimerViewModel(
     }
 
     fun skipPhase() {
-        val timer = timer.value
-        when {
-            timer != null -> timer.skipPhase()
-            else -> inIntro.value = false
+        if (inIntro.value) inIntro.value = false
+        viewModelScope.launch {
+            timer.filterNotNull().first().skipPhase()
         }
     }
 
@@ -352,6 +352,7 @@ class TimerViewModel(
                         )
                     }
                 }
+                inIntro.value = true
             }
             hideConfigurationSheet()
         }
