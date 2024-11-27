@@ -21,7 +21,7 @@ data class Configuration(
             fullRestDuration = 30.minutes,
             eyeBreaks = 2,
             sitBreaks = 1,
-            announcePresence = false,
+            announcePresence = !BuildKonfig.DEBUG,
         )
     }
 }

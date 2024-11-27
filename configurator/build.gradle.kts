@@ -1,5 +1,8 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
+    alias(libs.plugins.buildkonfig)
 }
 
 kotlin {
@@ -17,5 +20,14 @@ kotlin {
         commonTest.dependencies {
             implementation(libs.kotlin.test)
         }
+    }
+}
+
+buildkonfig {
+    packageName = "com.thebrownfoxx.unfocus.configurator"
+
+    defaultConfigs {
+        val debug = System.getenv("DEBUG") ?: "false"
+        buildConfigField(FieldSpec.Type.BOOLEAN, "DEBUG", debug)
     }
 }

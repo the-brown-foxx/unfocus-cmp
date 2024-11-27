@@ -1,13 +1,13 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run" type="GradleRunConfiguration" factoryName="Gradle">
+  <configuration default="false" name="runDistributable" type="GradleRunConfiguration" factoryName="Gradle">
     <ExternalSystemSettings>
       <option name="env">
         <map>
-          <entry key="DEBUG" value="true" />
+          <entry key="DEBUG" value="false" />
         </map>
       </option>
       <option name="executionName" />
-      <option name="externalProjectPath" value="$PROJECT_DIR$/composeApp" />
+      <option name="externalProjectPath" value="$PROJECT_DIR$" />
       <option name="externalSystemIdString" value="GRADLE" />
       <option name="scriptParameters" value="" />
       <option name="taskDescriptions">
@@ -15,7 +15,7 @@
       </option>
       <option name="taskNames">
         <list>
-          <option value="run" />
+          <option value="composeApp:runDistributable" />
         </list>
       </option>
       <option name="vmOptions" />
